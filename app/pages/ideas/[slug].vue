@@ -89,7 +89,7 @@ useSchemaOrg([
 .lede { margin: 1.25rem 0 0; font-size: 1.35rem; line-height: 1.45; font-style: italic; }
 .topics { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; list-style: none; margin: 1.25rem 0 0; padding: 0; }
 .topics a { text-decoration: none; color: var(--muted); }
-.topics a::before { content: '#'; }
+.topics a::before { content: '#' / ''; }
 .topics a:hover { color: var(--accent); }
 
 .related { max-width: var(--measure); margin-top: 4rem; padding-top: 1.25rem; border-top: 1px solid var(--ink); }

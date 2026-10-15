@@ -66,7 +66,7 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: true,
       failOnError: true,
-      routes: ['/', '/ideas', '/cv', '/rss.xml', '/404.html'],
+      routes: ['/', '/ideas', '/cv', '/rss.xml', '/not-found', '/404.html'],
     },
   },
 
@@ -75,7 +75,7 @@ export default defineNuxtConfig({
     payloadExtraction: true,
   },
 
-  sitemap: { zeroRuntime: true, sources: ['/api/__sitemap__/urls'] },
+  sitemap: { zeroRuntime: true, sources: ['/api/__sitemap__/urls'], exclude: ['/not-found', '/404.html'] },
   robots: { allow: ['/'] },
   ogImage: { enabled: false },
   linkChecker: { enabled: false },

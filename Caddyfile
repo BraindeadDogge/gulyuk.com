@@ -29,7 +29,7 @@
 	file_server
 
 	handle_errors {
-		rewrite * /404.html
+		rewrite * /not-found/index.html
 		file_server
 	}
 }
