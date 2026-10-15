@@ -49,8 +49,8 @@ export function layoutGraph(graph: Graph, seed = 7): LaidOutGraph {
     )
     .force('charge', forceManyBody<SimNode>().strength(d => (d.kind === 'topic' ? -720 : d.kind === 'idea' ? -260 : -70)))
     .force('collide', forceCollide<SimNode>().radius(d => d.r + (d.kind === 'topic' ? 38 : d.kind === 'idea' ? 34 : 16)).iterations(3))
-    .force('x', forceX<SimNode>(d => (d.kind === 'cv' ? 380 : 0)).strength(d => (d.kind === 'cv' ? 0.1 : 0.035)))
-    .force('y', forceY<SimNode>(d => (d.kind === 'cv' ? 230 : 0)).strength(d => (d.kind === 'cv' ? 0.1 : 0.05)))
+    .force('x', forceX<SimNode>(d => (d.kind === 'cv' ? 300 : 0)).strength(d => (d.kind === 'cv' ? 0.1 : 0.035)))
+    .force('y', forceY<SimNode>(d => (d.kind === 'cv' ? 170 : 0)).strength(d => (d.kind === 'cv' ? 0.1 : 0.05)))
     .stop()
 
   for (let i = 0; i < 420; i++) sim.tick()

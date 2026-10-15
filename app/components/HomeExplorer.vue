@@ -117,7 +117,7 @@ onBeforeUnmount(() => {
   <div class="explorer" :class="{ 'is-entering': entering, 'is-leaving': switching === 'out', 'is-arriving': switching === 'in' }">
     <h1 class="visually-hidden">Grigory Gulyuk: notes, experiments and CV</h1>
 
-    <section class="graph-panel" aria-label="Map of ideas, topics and CV">
+    <section id="graph-panel" class="graph-panel" aria-label="Map of ideas, topics and CV">
       <GraphView
         :graph="graph"
         :active-id="activeId"
@@ -128,35 +128,45 @@ onBeforeUnmount(() => {
       />
     </section>
 
-    <div class="list-panel" @focusin="onFocusIn" @focusout="onFocusOut">
+    <div id="list-panel" class="list-panel" @focusin="onFocusIn" @focusout="onFocusOut">
       <ClassicNav :groups="groups" />
     </div>
 
     <footer class="stage-footer">
       <div class="intro">
         <p class="blurb">Notes, experiments and a CV. Every shape is a page.</p>
-        <p v-if="graphShown" class="mono muted legend">
-          <span class="key"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" class="k-hub" /></svg>topic</span>
-          <span class="key"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="4.5" class="k-idea" /></svg>idea</span>
-          <span class="key"><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" class="k-cv" /></svg>cv</span>
-          <span class="count">{{ count.ideas }} ideas · {{ count.topics }} topics</span>
-        </p>
-        <p v-if="graphShown" class="mono muted hint">Hover to trace connections. Drag to rearrange. Keyboard and screen readers: tab through the list.</p>
+        <div class="graph-only">
+          <p class="mono muted legend">
+            <span class="key"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" class="k-hub" /></svg>topic</span>
+            <span class="key"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="4.5" class="k-idea" /></svg>idea</span>
+            <span class="key"><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" class="k-cv" /></svg>cv</span>
+            <span class="key"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="3" class="k-new" /></svg>newest</span>
+            <span class="count">{{ count.ideas }} ideas · {{ count.topics }} topics</span>
+          </p>
+          <p class="mono muted hint">Hover to trace connections. Drag to rearrange. Keyboard and screen readers: the list of every page opens as you tab.</p>
+        </div>
       </div>
 
       <ClientOnly>
         <div class="controls no-print">
+          <span class="status-line mono muted" aria-hidden="true">{{ status }}</span>
           <button v-if="graphShown" type="button" class="ctl" :aria-pressed="paused" @click="toggleMotion">
-            {{ paused ? 'resume motion' : 'pause motion' }}
+            pause motion
           </button>
-          <button type="button" class="ctl ctl--main" @click="toggleView">
+          <button
+            type="button"
+            class="ctl ctl--main"
+            aria-describedby="view-toggle-help"
+            aria-controls="graph-panel list-panel"
+            @click="toggleView"
+          >
             {{ graphShown ? 'make everything boring' : 'make it interesting again' }}
           </button>
+          <span id="view-toggle-help" class="visually-hidden">Switches between the interactive graph and a plain list of the same pages.</span>
         </div>
       </ClientOnly>
     </footer>
 
-    <p class="toast mono" :class="{ 'is-on': !!status }" aria-hidden="true">{{ status }}</p>
     <p class="visually-hidden" role="status" aria-live="polite">{{ status }}</p>
   </div>
 </template>
@@ -187,6 +197,10 @@ html[data-view='graph'] .list-panel {
 }
 html[data-view='list'] .graph-panel { display: none; }
 html[data-view='list'] .list-panel {
+  position: static; width: auto; height: auto; margin: 0; overflow: visible; clip-path: none; white-space: normal;
+}
+/* Keyboard users tabbing through the (visually hidden) list must see where focus is. */
+.explorer .list-panel:focus-within {
   position: static; width: auto; height: auto; margin: 0; overflow: visible; clip-path: none; white-space: normal;
 }
 
@@ -237,23 +251,18 @@ html[data-view='list'] .list-panel {
   transition: background-color var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out), border-color var(--t-fast) var(--ease-out);
 }
 .ctl:hover { border-color: var(--accent); color: var(--accent); }
-.ctl--main { background: var(--ink); color: var(--bg); }
-.ctl--main:hover { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.ctl--main { font-weight: 700; }
+.ctl--main::after { content: ' →' / ''; }
 .ctl[aria-pressed='true'] { border-style: dashed; }
 
-.toast {
-  position: fixed;
-  left: 50%;
-  bottom: 1.25rem;
-  margin: 0;
-  padding: 0.5rem 0.9rem;
-  background: var(--ink);
-  color: var(--bg);
-  border-radius: 2px;
-  opacity: 0;
-  transform: translate(-50%, 8px);
-  pointer-events: none;
-  transition: opacity var(--t-mid) var(--ease-out), transform var(--t-mid) var(--ease-out);
-}
-.toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+.controls { align-items: center; }
+.status-line { min-width: 12ch; text-align: right; }
+.status-line:not(:empty)::before { content: '> ' / ''; color: var(--accent); }
+
+/* Legend and hint only belong with the graph: CSS follows the same view rules as the panels. */
+.graph-only { display: none; }
+@media (min-width: 760px) { .graph-only { display: block; } }
+html[data-view='graph'] .graph-only { display: block; }
+html[data-view='list'] .graph-only { display: none; }
+.k-new { fill: var(--accent); }
 </style>

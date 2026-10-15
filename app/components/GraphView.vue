@@ -65,12 +65,13 @@ function showLabel(n: GraphNode) {
 }
 /** Long titles are shortened until the node is hovered, so resting labels don't collide. */
 function labelText(n: GraphNode) {
-  if (n.kind !== 'idea' || isNear(n.id) || n.label.length <= 26) return n.label
-  return `${n.label.slice(0, 25).trimEnd()}…`
+  if (n.kind === 'topic' || n.id === 'cv:root' || isNear(n.id) || n.label.length <= 22) return n.label
+  return `${n.label.slice(0, 21).trimEnd()}…`
 }
 function labelAttrs(n: GraphNode) {
   if (n.kind === 'topic') return { x: 0, y: n.r + 18, 'text-anchor': 'middle' }
-  const flip = n.x > props.graph.width - 260
+  // Labels point outward from the middle of the map, away from the hubs that crowd it.
+  const flip = n.x < props.graph.width / 2
   return { x: flip ? -(n.r + 10) : n.r + 10, y: 4, 'text-anchor': flip ? 'end' : 'start' }
 }
 
@@ -152,12 +153,14 @@ function snapHome() {
   paint()
 }
 
+let pulseClear: ReturnType<typeof setTimeout> | undefined
+/** The ring always fires on the newest idea: the one place the accent sits at rest. */
 function firePulse() {
-  const hubs = simNodes.filter(n => n.id.startsWith('topic:'))
-  if (!hubs.length) return
-  const hub = hubs[Math.floor(Math.random() * hubs.length)]!
-  pulse.value = { x: hub.hx, y: hub.hy, r: hub.r, key: Date.now() }
-  setTimeout(() => (pulse.value = null), 1800)
+  const target = simNodes.find(n => n.id === props.alwaysLabel[0]) ?? simNodes.find(n => n.id.startsWith('topic:'))
+  if (!target) return
+  pulse.value = { x: target.hx, y: target.hy, r: target.r, key: Date.now() }
+  clearTimeout(pulseClear)
+  pulseClear = setTimeout(() => (pulse.value = null), 1800)
 }
 
 function toSvgPoint(clientX: number, clientY: number) {
@@ -179,6 +182,7 @@ function onLeave() {
 }
 
 function onDown(e: PointerEvent, n: GraphNode) {
+  suppressClick = false
   if (props.paused || e.pointerType !== 'mouse' || e.button !== 0) return
   const node = simNodes.find(s => s.id === n.id)
   if (!node) return
@@ -201,6 +205,8 @@ function onDragEnd() {
     suppressClick = drag.moved
     drag.node.fx = drag.node.fy = null
     drag = null
+    // If the pointer was released off the node, no click follows: don't swallow the next real one.
+    setTimeout(() => (suppressClick = false), 0)
   }
   window.removeEventListener('pointermove', onDragMove)
   window.removeEventListener('pointerup', onDragEnd)
@@ -296,6 +302,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   cancelAnimationFrame(raf)
   clearInterval(pulseTimer)
+  clearTimeout(pulseClear)
   observers.forEach(off => off())
   sim?.stop()
   onDragEnd()
@@ -332,9 +339,10 @@ onBeforeUnmount(() => {
       <a
         v-for="n in graph.nodes"
         :key="n.id"
-        :ref="(el) => { if (el) nodeEls.set(n.id, el as SVGAElement) }"
+        :ref="(el) => { if (el) nodeEls.set(n.id, el as SVGAElement); else nodeEls.delete(n.id) }"
         :href="n.href"
         tabindex="-1"
+        draggable="false"
         class="node"
         :class="nodeClass(n)"
         :style="{ '--hop': hops.get(n.id) ?? 0 }"
@@ -349,6 +357,7 @@ onBeforeUnmount(() => {
           <circle v-if="n.kind === 'topic'" class="shape shape--hub" :r="n.r" />
           <circle v-else-if="n.kind === 'idea'" class="shape shape--idea" :r="n.r" />
           <rect v-else class="shape shape--cv" :x="-n.r" :y="-n.r" :width="n.r * 2" :height="n.r * 2" />
+          <circle v-if="n.id === alwaysLabel[0]" class="fresh" :cx="n.r * 0.85" :cy="-n.r * 0.85" r="3.2" />
         </g>
         <text v-if="showLabel(n)" class="glabel" :class="`glabel--${n.kind}`" v-bind="labelAttrs(n)">{{ labelText(n) }}</text>
       </a>
@@ -417,6 +426,9 @@ onBeforeUnmount(() => {
 .glabel--topic { font-weight: 600; letter-spacing: -0.005em; }
 .glabel--cv { fill: var(--muted); }
 .node.is-active .glabel { fill: var(--accent); }
+.node.is-dim .glabel { opacity: 0.4; }
+/* The newest idea carries the only mark of accent at rest. */
+.fresh { fill: var(--accent); }
 
 .pulse {
   fill: none;
