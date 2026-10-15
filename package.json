@@ -1,0 +1,52 @@
+{
+  "name": "gulyuk-com",
+  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@10.20.0",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "typecheck": "nuxt typecheck",
+    "cv:pdf": "node scripts/build-cv-pdf.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/familjen-grotesk": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@fontsource/commit-mono": "^5.3.0",
+    "@nuxt/content": "^3.16.2",
+    "@nuxtjs/color-mode": "^4.0.1",
+    "@nuxtjs/seo": "^6.0.1",
+    "better-sqlite3": "^13.0.3",
+    "d3-force": "^3.0.0",
+    "nuxt": "^4.6.1",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
+    "vue": "^3.5.43",
+    "vue-router": "^5.4.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
+    "@types/d3-force": "^3.0.10",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5",
+    "vue-tsc": "^3.3.13"
+  },
+  "engines": {
+    "node": ">=22.22.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "@parcel/watcher",
+      "sharp",
+      "better-sqlite3",
+      "unrs-resolver"
+    ]
+  }
+}

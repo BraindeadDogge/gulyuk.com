@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .ink { fill: #1b1a17; stroke: #1b1a17; }
+    .acc { fill: #c2301a; }
+    @media (prefers-color-scheme: dark) { .ink { fill: #ece8df; stroke: #ece8df; } .acc { fill: #ff6b4a; } }
+  </style>
+  <circle class="ink" cx="11" cy="17" r="7" />
+  <circle cx="23" cy="9" r="3.5" fill="none" stroke-width="2" class="ink" style="fill:none" />
+  <rect class="acc" x="19" y="21" width="7" height="7" />
+</svg>
