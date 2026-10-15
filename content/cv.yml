@@ -1,0 +1,67 @@
+# PLACEHOLDER DATA. LinkedIn is behind a login, so this is filler in the right shape.
+# Replace every entry with the real CV; ids become anchors (/cv#exp-1) and graph nodes.
+profile:
+  name: Grigory Gulyuk
+  headline: Machine learning engineer and researcher
+  location: Placeholder City
+  summary: >-
+    Placeholder summary. I build and study machine learning systems, mostly the unglamorous parts:
+    evaluation, data, and the small experiments that decide whether an idea is worth a month.
+  email: hello@gulyuk.com
+  links:
+    - label: LinkedIn
+      url: https://www.linkedin.com/in/gulyuk
+    - label: GitHub
+      url: https://github.com/gulyuk
+
+experience:
+  - id: exp-1
+    role: Senior Machine Learning Engineer
+    org: Company A (placeholder)
+    location: Remote
+    start: "2023-02"
+    bullets:
+      - Placeholder. Led the evaluation harness for a ranking model used by several product teams.
+      - Placeholder. Cut offline experiment turnaround from days to hours with a cached feature pipeline.
+      - Placeholder. Wrote the internal guide on reading learning curves honestly.
+    topics: [ml, tools]
+  - id: exp-2
+    role: Machine Learning Engineer
+    org: Company B (placeholder)
+    location: Placeholder City
+    start: "2020-06"
+    end: "2023-01"
+    bullets:
+      - Placeholder. Shipped a function-approximation service for sensor calibration.
+      - Placeholder. Replaced a hand-tuned heuristic with a small model that was easier to test.
+    topics: [ml, math]
+  - id: exp-3
+    role: Research Assistant
+    org: University Lab (placeholder)
+    start: "2018-09"
+    end: "2020-05"
+    bullets:
+      - Placeholder. Studied approximation error of small neural networks on smooth targets.
+    topics: [math, visualization]
+
+education:
+  - id: edu-1
+    degree: MSc, Applied Mathematics (placeholder)
+    school: Placeholder University
+    start: "2016"
+    end: "2018"
+    note: Thesis on approximation theory.
+
+skills:
+  - id: skills-ml
+    group: Machine learning
+    items: [PyTorch, JAX, scikit-learn, evaluation design, experiment tracking]
+    topics: [ml]
+  - id: skills-eng
+    group: Engineering
+    items: [Python, TypeScript, Vue, Nuxt, SQL, Docker]
+    topics: [tools]
+  - id: skills-viz
+    group: Visualization
+    items: [D3, SVG, Canvas, interactive explanations]
+    topics: [visualization]
