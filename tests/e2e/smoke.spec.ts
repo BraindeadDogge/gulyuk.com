@@ -19,7 +19,7 @@ test.describe('home', () => {
     await page.getByRole('button', { name: 'make everything boring' }).click()
     await expect(page.locator('nav[aria-label="Contents"]')).toBeVisible()
     await expect(graph).toBeHidden()
-    await expect(page.getByRole('status').first()).toHaveText(/ok\. boring\./)
+    await expect(page.getByRole('status').filter({ hasText: 'ok. boring.' })).toHaveCount(1)
 
     await page.getByRole('button', { name: 'make it interesting again' }).click()
     await expect(graph).toBeVisible()
@@ -28,6 +28,8 @@ test.describe('home', () => {
   test('remembers the chosen view across reloads', async ({ page }) => {
     await page.goto('/')
     await page.getByRole('button', { name: 'make everything boring' }).click()
+    // The switch animates for about half a second and saves the choice at the end.
+    await expect(page.locator('svg.graph')).toBeHidden()
     await page.reload()
     await expect(page.locator('nav[aria-label="Contents"]')).toBeVisible()
     await expect(page.locator('svg.graph')).toBeHidden()
@@ -48,11 +50,22 @@ test.describe('home', () => {
     expect(focusable).toBe(16)
   })
 
-  test('pause motion toggles', async ({ page }) => {
+  test('pause motion keeps its name and reports state with aria-pressed', async ({ page }) => {
     await page.goto('/')
-    const button = page.getByRole('button', { name: /pause motion|resume motion/ })
+    const button = page.getByRole('button', { name: 'pause motion' })
     await button.click()
-    await expect(page.getByRole('button', { name: 'resume motion' })).toBeVisible()
+    await expect(button).toHaveAttribute('aria-pressed', 'true')
+    await button.click()
+    await expect(button).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  test('tabbing into the hidden list reveals it so focus is visible', async ({ page }) => {
+    await page.goto('/')
+    const first = page.locator('nav[aria-label="Contents"] a').first()
+    await first.focus()
+    await expect(first).toBeVisible()
+    const box = await first.boundingBox()
+    expect(box?.width ?? 0).toBeGreaterThan(20)
   })
 })
 
@@ -66,7 +79,7 @@ test.describe('pages', () => {
     await page.goto('/ideas/linkedin-sample-post')
     await expect(page.locator('iframe')).toHaveCount(0)
     await page.getByRole('button', { name: /Load LinkedIn post/ }).click()
-    await expect(page.locator('iframe[title="LinkedIn post"]')).toHaveAttribute('referrerpolicy', 'no-referrer')
+    await expect(page.locator('iframe[title^="LinkedIn post"]')).toHaveAttribute('referrerpolicy', 'no-referrer')
   })
 
   test('the demo trains: loss goes down', async ({ page }) => {
@@ -96,6 +109,13 @@ test.describe('pages', () => {
     const response = await page.goto('/nope')
     expect(response?.status()).toBe(404)
     await expect(page.getByRole('link', { name: /Back to home/ })).toBeVisible()
+  })
+
+  test('the prerendered not-found page has a title and heading without JavaScript', async ({ request }) => {
+    const html = await (await request.get('/not-found')).text()
+    expect(html).toContain('<title>Page not found')
+    expect(html).toContain('no edges lead here.')
+    expect(html).toContain('Back to home')
   })
 
   test('feeds exist', async ({ request }) => {

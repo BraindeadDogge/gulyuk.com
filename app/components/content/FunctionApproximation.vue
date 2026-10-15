@@ -120,20 +120,28 @@ function frame() {
   measure()
   if (steps.value >= STEP_LIMIT) {
     playing.value = false
+    announcement.value = `Training finished. ${summary()}`
     return
   }
   raf = requestAnimationFrame(frame)
 }
 
-watch(playing, (on, was) => {
+const summary = () =>
+  `Step ${steps.value}. Mean squared error ${loss.value.toFixed(4)} with ${units.value} hidden units on the ${TARGETS[target.value].label} target.`
+
+watch(playing, (on) => {
   if (on && !raf) raf = requestAnimationFrame(frame)
-  if (!on && was) {
+  if (!on) {
     cancelAnimationFrame(raf)
     raf = 0
-    announcement.value = `Training paused at step ${steps.value}. Mean squared error ${loss.value.toFixed(4)} with ${units.value} hidden units on the ${TARGETS[target.value].label} target.`
   }
-  if (on) announcement.value = ''
 })
+
+// Spoken updates come only from the visitor's own actions, never from scrolling the demo away.
+function togglePlay() {
+  playing.value = !playing.value
+  announcement.value = playing.value ? 'Training.' : `Training paused. ${summary()}`
+}
 
 watch([target, units], () => measure())
 
@@ -187,8 +195,9 @@ init()
     <svg :viewBox="`0 0 ${W} ${H}`" role="img" :aria-labelledby="`${uid}-title ${uid}-desc`" class="plot">
       <title :id="`${uid}-title`">Function approximation plot</title>
       <desc :id="`${uid}-desc`">
-        A neural network with {{ units }} hidden units fitted to the {{ TARGETS[target].label }} target.
-        Current mean squared error {{ loss.toFixed(4) }} after {{ steps }} training steps.
+        A neural network fitted to the {{ TARGETS[target].label }} target. The dashed line is the target,
+        the solid line is the network, and the dots are training samples. The current step and loss are
+        shown below the plot.
       </desc>
       <line :x1="PLOT.left" :x2="PLOT.right" :y1="PLOT.mid" :y2="PLOT.mid" class="axis" />
       <line :x1="sx(0)" :x2="sx(0)" y1="16" :y2="H - 16" class="axis" />
@@ -205,15 +214,15 @@ init()
         </select>
       </label>
       <label class="field">
-        <span class="mono">hidden units <output>{{ units }}</output></span>
+        <span class="mono">hidden units <output aria-hidden="true">{{ units }}</output></span>
         <input v-model.number="units" type="range" min="1" :max="MAX_UNITS" step="1" :aria-valuetext="`${units} hidden units`" />
       </label>
       <label class="field">
-        <span class="mono">learning rate <output>{{ rate.toFixed(2) }}</output></span>
+        <span class="mono">learning rate <output aria-hidden="true">{{ rate.toFixed(2) }}</output></span>
         <input v-model.number="rate" type="range" min="0.01" max="0.3" step="0.01" :aria-valuetext="`learning rate ${rate.toFixed(2)}`" />
       </label>
       <div class="buttons">
-        <button type="button" class="btn" :aria-pressed="playing" @click="playing = !playing">{{ playing ? 'pause' : 'train' }}</button>
+        <button type="button" class="btn" :aria-pressed="playing" @click="togglePlay">train</button>
         <button type="button" class="btn" @click="reset">reset</button>
       </div>
     </div>

@@ -6,7 +6,7 @@
   --ink: #1b1a17;
   --muted: #6b665c;
   --line: #d9d4c7;
-  --edge: #aaa493;
+  --edge: #8c8674;
   --accent: #c2301a;
 
   --font-body: 'Newsreader Variable', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
@@ -34,7 +34,7 @@ html.dark {
   --ink: #ece8df;
   --muted: #9a958a;
   --line: #2e2c28;
-  --edge: #57534b;
+  --edge: #7a7568;
   --accent: #ff6b4a;
   color-scheme: dark;
 }
@@ -57,7 +57,7 @@ body {
   flex-direction: column;
   background: var(--bg);
   color: var(--ink);
-  font: 400 1.1875rem/1.65 var(--font-body);
+  font: 400 1.1875rem/1.6 var(--font-body);
   font-optical-sizing: auto;
   font-variant-numeric: oldstyle-nums;
   text-wrap: pretty;
@@ -86,7 +86,7 @@ a {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
-  text-decoration-color: color-mix(in srgb, var(--ink) 40%, transparent);
+  text-decoration-color: currentColor;
   transition: color var(--t-fast) var(--ease-out), text-decoration-color var(--t-fast) var(--ease-out);
 }
 a:hover { color: var(--accent); text-decoration-color: var(--accent); }
@@ -216,9 +216,7 @@ main { flex: 1; outline: none; }
 .prose hr { border: 0; border-top: 1px solid var(--line); }
 .prose :not(pre) > code {
   font: 0.86em var(--font-mono);
-  padding: 0.08em 0.3em;
-  background: color-mix(in srgb, var(--ink) 7%, transparent);
-  border-radius: 2px;
+  border-bottom: 1px dotted var(--edge);
 }
 .prose pre {
   font: 0.85rem/1.6 var(--font-mono);
@@ -250,7 +248,7 @@ math[display='block'] {
   color: inherit;
 }
 .heading-anchor::before {
-  content: '#';
+  content: '#' / '';
   position: absolute;
   margin-left: -1.1em;
   font: 400 0.9em var(--font-mono);

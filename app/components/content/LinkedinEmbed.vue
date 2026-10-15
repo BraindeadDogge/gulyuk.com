@@ -22,10 +22,8 @@ const openUrl = computed(() => {
   }
 })
 
-async function load() {
+function load() {
   loaded.value = true
-  await nextTick()
-  frame.value?.focus()
 }
 </script>
 
@@ -43,7 +41,7 @@ async function load() {
       ref="frame"
       :src="embedSrc"
       sandbox="allow-scripts allow-same-origin allow-popups"
-      title="LinkedIn post"
+      :title="props.label ? `LinkedIn post from ${props.label}` : 'LinkedIn post'"
       width="100%"
       height="520"
       loading="lazy"

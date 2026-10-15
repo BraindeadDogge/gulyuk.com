@@ -33,6 +33,6 @@ defineProps<{ idea: IdeaListItem }>()
 .summary { margin: 0; max-width: 60ch; color: var(--muted); }
 .topics { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; list-style: none; margin: 0.25rem 0 0; padding: 0; }
 .topics a { text-decoration: none; color: var(--muted); }
-.topics a::before { content: '#'; }
+.topics a::before { content: '#' / ''; }
 .topics a:hover { color: var(--accent); }
 </style>

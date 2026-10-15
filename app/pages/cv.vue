@@ -104,7 +104,7 @@ h3 { font-size: 1.2rem; }
 .entry li::marker { color: var(--muted); }
 .entry ul.tags { display: flex; gap: 0.3rem 1rem; list-style: none; padding: 0; }
 .tags a { color: var(--muted); text-decoration: none; }
-.tags a::before { content: '#'; }
+.tags a::before { content: '#' / ''; }
 .note, .skill-list { margin: 0.35rem 0 0; }
 .skill-list { margin-top: 0; }
 
