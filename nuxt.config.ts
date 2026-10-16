@@ -8,11 +8,14 @@ export default defineNuxtConfig({
 
   modules: ['@nuxt/content', '@nuxtjs/seo', '@nuxtjs/color-mode', '@nuxt/fonts'],
 
-  // Fonts for the generated share images only (the site's own fonts come from @fontsource). Local files, so nothing
-  // is downloaded from Google at build time.
+  // Fonts for the generated share images only. Local files, so nothing is downloaded from Google at build time.
   fonts: {
     providers: { google: false, googleicons: false },
     families: [
+      // The site's own fonts come from @fontsource (see `css` below). Left to itself, @nuxt/fonts takes these families
+      // over and drops the italic Newsreader faces, so every italic became a slanted copy of the upright font.
+      { name: 'Newsreader Variable', provider: 'none' },
+      { name: 'Familjen Grotesk Variable', provider: 'none' },
       { name: 'Commit Mono', src: '/fonts/commit-mono-400.woff2', weight: 400, global: true },
       { name: 'Commit Mono', src: '/fonts/commit-mono-700.woff2', weight: 700, global: true },
     ],
@@ -26,7 +29,7 @@ export default defineNuxtConfig({
     trailingSlash: false,
   },
 
-  // Visit statistics (Umami). Both values are public by design and read at build time (see DEPLOY.md).
+  // Visit statistics (Umami). Both values are public by design and read at build time (see docs/analytics.md).
   // Left empty, no analytics code or request is ever made.
   runtimeConfig: {
     public: {
