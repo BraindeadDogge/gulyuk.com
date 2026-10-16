@@ -1,0 +1,27 @@
+<section class="chapter" id="ch5" data-title="Noise">
+  <p class="eyebrow">Chapter 5</p>
+  <h2>Noise: when a perfect fit is a mistake</h2>
+  <p>So far most dots lay exactly on the curve. Real measurements do not. In the figure below every dot is the true curve plus random noise, whichever target you chose in the bar. The ink-coloured line is still the truth, and the fit never sees it.</p>
+  <p>The model is the polynomial from chapter 1, in the well-behaved Chebyshev basis, with one slider. Filled dots are what it trains on. Hollow dots are fresh measurements it has never seen.</p>
+  <figure class="figure">
+    <canvas id="c5a" role="img" aria-label="Polynomial fit of chosen degree to noisy training points, with held-out points and the true curve"></canvas>
+    <canvas id="c5b" class="small" role="img" aria-label="Training error and test error plotted against polynomial degree"></canvas>
+    <div class="readout" id="ro5" aria-live="polite"></div>
+    <p class="legend">You control: <span class="p">degree d</span> · Learned by least squares: the coefficients · Lower panel: <span style="color:var(--curve)">training error</span> (solid line), <span style="color:var(--err)">test error</span> (dashed line), dotted vertical line = your degree. This figure has its own noisy sample.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label for="deg5"><span>degree d</span><output id="deg5o"></output></label><input id="deg5" type="range" min="0" max="20" step="1" value="3"></div>
+    </div>
+    <div class="row"><button type="button" id="break5">Break it</button><button type="button" id="resample5">New noise</button><button type="button" id="reset5">Reset</button></div>
+    <p class="breaknote" id="bn5" aria-live="polite"></p>
+    <figcaption>Fig. {{fig}}. Raise the degree and watch the lower panel. The training error only falls. The test error, measured against the true curve, falls and then climbs. "New noise" draws a fresh sample.</figcaption>
+  </figure>
+  <p>The best degree sits at the bottom of that U. To its left the fit is too stiff to follow the curve, and the error that remains is <abbr data-g="bias">bias</abbr>: it would be there however much data you collected. To its right the fit is flexible enough to chase the noise, and the error is <abbr data-g="variance">variance</abbr>: a different sample of dots would give a very different curve. A curve that passes through every dot (<abbr data-g="interpolation">interpolation</abbr>) is the extreme case of the second kind.</p>
+  <p>The readout estimates both. It refits the same degree on {{bv_trials}} fresh samples; bias² is how far the average of those curves sits from the truth, and variance is how much the curves scatter around their own average. On average over samples, the squared test error against the truth is exactly bias² plus variance. The Test RMSE shown is one sample's square root, so do not add it to them directly.</p>
+  <p>With the Smooth target and the opening sample, degree {{bv_best_deg}} is best, with a test RMSE of {{bv_best_rmse}}. Degree 20 trains down to {{bv_deg20_train}} but tests at {{bv_deg20_rmse}}.</p>
+  <p>It helps to keep three errors apart. The <em>approximation</em> error asks whether the family of curves can get close at all. The <em>generalisation</em> error asks how much the noise in the data hurts. The <em>optimisation</em> error asks whether the training procedure found the best member of the family. Universality theorems speak only to the first.</p>
+  <aside class="aside">Modern networks complicate this picture: some keep improving past the point where they fit the training data exactly. That is an active research topic, and this page does not claim to settle it.</aside>
+  <details class="math"><summary>Math (skippable)</summary>
+    <p>For a fit \(\hat f\) trained on a random sample and a fixed point \(x\): \(\mathbb E\big[(\hat f(x)-f(x))^2\big]=\big(\mathbb E\hat f(x)-f(x)\big)^2+\operatorname{Var}\hat f(x)\). Scored against noisy measurements \(y=f(x)+\varepsilon\), a further \(\sigma^2\) is added that no model can remove.</p>
+    <p>For least squares with \(p\) parameters on \(n\) points the variance averages roughly \(\sigma^2 p/n\), which is why it climbs steadily with the degree.</p>
+  </details>
+</section>

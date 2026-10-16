@@ -1,0 +1,24 @@
+<section class="chapter" id="ch2" data-title="Runge and nodes">
+  <p class="eyebrow">Chapter 2</p>
+  <h2>Runge's lesson: where you sample matters</h2>
+  <p>Suppose you may measure the function anywhere you like, and you want the one polynomial of degree <span class="mono">n</span> that passes through <span class="mono">n+1</span> measurements. The obvious choice is evenly spaced measurements. It is also a trap.</p>
+  <figure class="figure">
+    <canvas id="c2" role="img" aria-label="Polynomial interpolation of the Runge function at equispaced or Chebyshev nodes"></canvas>
+    <div class="readout" id="ro2" aria-live="polite"></div>
+    <p class="legend">You control: <span class="p">number of nodes</span> and <span class="p">where they sit</span> · Fixed: the function 1/(1+25x²). This figure has its own target.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label for="n2"><span>degree n</span><output id="n2o"></output></label><input id="n2" type="range" min="2" max="40" step="1" value="8"></div>
+      <div class="ctrl"><label><span>nodes</span></label><div class="row" id="kind2" role="group" aria-label="Node placement"><button type="button" data-v="equi">Equispaced</button><button type="button" data-v="cheb">Chebyshev</button></div></div>
+    </div>
+    <div class="row"><button type="button" id="break2">Break it</button><button type="button" id="reset2">Reset</button></div><p class="breaknote" id="bn2" aria-live="polite"></p>
+    <figcaption>Fig. {{fig}}. The dots along the bottom mark where the function was sampled. Compare where they sit with where the error appears.</figcaption>
+  </figure>
+  <p>With evenly spaced nodes the polynomial wiggles harder and harder near the ends: at degree 10 the largest error is {{runge_eq10}}, at degree 20 it is {{runge_eq20}}, on a function that never exceeds 1. Adding more data made the fit worse.</p>
+  <p>Now crowd the nodes toward the ends, spacing them like the horizontal positions of equally spaced points on a circle. These are Chebyshev points. At degree 20 the largest error drops to {{runge_cheb20}}.</p>
+  <aside class="aside">No fixed rule for placing nodes works for every continuous function (Faber, 1914). Chebyshev points are simply a very good default for smooth ones.</aside>
+  <aside class="aside">There is a way out that changes the family: ratios of polynomials, called Padé or rational approximants. The Runge function is itself a ratio, 1 over 1 + 25x², so a rational fit can match it exactly with two parameters where a polynomial needs ever more. The price is that the fit is no longer linear in its parameters, and the denominator can hit zero where you do not want it to.</aside>
+  <details class="math"><summary>Math (skippable)</summary>
+    <p>The interpolation error at \(x\) is \(\dfrac{f^{(n+1)}(\xi)}{(n+1)!}\prod_{i=0}^{n}(x-x_i)\) for some \(\xi\) in the interval. You cannot control \(f^{(n+1)}\), but you can choose the nodes to keep the product small. Chebyshev nodes (nearly) minimise its maximum; evenly spaced nodes make it huge near the ends.</p>
+    <p>Equivalently, the Lebesgue constant, which measures how much the interpolant can amplify errors in the data, grows exponentially for equispaced nodes and only logarithmically for Chebyshev nodes.</p>
+  </details>
+</section>

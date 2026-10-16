@@ -1,0 +1,42 @@
+<section class="chapter" id="ch10" data-title="Fourier features">
+  <p class="eyebrow">Chapter 10</p>
+  <h2>Fourier features: giving a network the right alphabet</h2>
+  <p>The target below is two waves added together: a slow one and a fast one. A small network is trained on 48 points of it by <abbr data-g="gradient-descent">gradient descent</abbr>, and you watch the fit improve step by step. The training is live and runs at most 300 steps.</p>
+  <figure class="figure">
+    <canvas id="c10" role="img" aria-label="A neural network being trained on a two-wave target, with the target drawn dark"></canvas>
+    <div class="readout" id="ro10" aria-live="polite"></div>
+    <p class="legend">You control: <span class="p">the frequency scale</span> of the input features (plain means the raw input x) · Learned: all network weights, by Adam · Fixed: the data, the seed and the 300-step cap.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label for="s10"><span>frequency scale</span><output id="s10o"></output></label><input id="s10" type="range" min="0" max="5" step="1" value="0"></div>
+    </div>
+    <div class="row"><button type="button" id="play10">Train</button><button type="button" id="step10">+25 steps</button><button type="button" id="break10">Break it</button><button type="button" id="reset10">Reset</button></div>
+    <p class="breaknote" id="bn10" aria-live="polite"></p>
+    <figcaption>Fig. {{fig}}. With a plain input the network learns the slow wave first and the fast wave much later. Move the scale up to give it sine and cosine features at random frequencies; the fast wave arrives sooner. Too high and the fit starts to wobble between the dots.</figcaption>
+  </figure>
+  <p>Watch the readout. After 300 steps a plain network has learned {{sb_low_plain}}% of the slow wave but only {{sb_high_plain}}% of the fast one. This habit, fitting slow components before fast ones, is called <abbr data-g="spectral-bias">spectral bias</abbr>. The network is not unable to represent the fast wave; the training is just slow to reach it.</p>
+  <p>The remedy is a change of alphabet, not of network. Instead of feeding in <span class="mono">x</span>, feed in sines and cosines of <span class="mono">x</span> at a spread of frequencies. The network then starts with fast waves already within reach. At scale 4 it learns {{sb_high_ff}}% of the fast wave in the same 300 steps.</p>
+  <p>The scale is a real choice. It sets how fast the features can wiggle. Far too high, and the network can fit the points with waves that swing wildly between them. This is the variance error of chapter 5 again.</p>
+  <aside class="aside">Spectral bias was described for deep networks by Rahaman and colleagues (2019). Random Fourier features as network inputs are due to Tancik and colleagues (2020), who used them for images and 3D scenes, where the input is just a few coordinates.</aside>
+  <details class="math"><summary>Math (skippable)</summary>
+    <p>The input \(x\) is replaced by \(\gamma(x)=\big[\sin(2\pi b_j x),\ \cos(2\pi b_j x)\big]_{j=1}^{16}\) with \(b_j\sim\mathcal N(0,\sigma^2)\). The network has two hidden layers of 32 tanh units and a linear output; training minimises mean squared error with Adam (learning rate 0.01).</p>
+    <p>The numbers shown are \(\int_{-1}^{1} g(x)\sin(k\pi x)\,dx\) for \(k=1\) and \(k=8\), divided by the target's amplitude of each (1 and 0.5). A value of 100% means that wave is fully learned.</p>
+  </details>
+  <details class="math"><summary>Math (skippable): what one training step does</summary>
+    <p>The weights form a long vector \(w = (w_1, \dots, w_p)\), and the training score \(L_{\text{total}}(w)\) is a landscape over it. Its slope along each weight is collected in the <abbr data-g="gradient">gradient</abbr>:</p>
+    $$\nabla_w L = \Big(\frac{\partial L}{\partial w_1},\ \dots,\ \frac{\partial L}{\partial w_p}\Big).$$
+    <p>For a small step \(dw\) the score changes, to first order, by</p>
+    $$dL = \langle \nabla L,\, dw \rangle = \lVert \nabla L \rVert\, \lVert dw \rVert \cos\angle(\nabla L,\, dw).$$
+    <p>This is largest when \(dw\) points along the gradient and most negative when it points against it, so the step that lowers the score fastest is</p>
+    $$w_{t+1} = w_t - \alpha\, \nabla_w L^{(t)}_{\text{total}},$$
+    <p>with a step size \(\alpha\). Adam, which this page uses, adds momentum to this step and scales each weight's step by the size of its recent gradients.</p>
+    <p>The gradient itself comes from the chain rule, applied from the output backwards (<abbr data-g="backpropagation">backpropagation</abbr>). Suppose a weight \(w_1\) inside \(f_1\) reaches the score \(L\) along two routes, through \(f_2\) and through \(f_3\), which meet in \(f_4\). Each route contributes a product of local slopes, and the routes add:</p>
+    $$\frac{dL}{dw_1} = \frac{\partial L}{\partial y_4}\Big(\frac{\partial f_4}{\partial y_2}\frac{\partial f_2}{\partial y_1} + \frac{\partial f_4}{\partial y_3}\frac{\partial f_3}{\partial y_1}\Big)\frac{\partial f_1}{\partial w_1}.$$
+    <p>Working from \(L\) backwards, every factor is computed once and shared by all the weights behind it, so a single backward sweep delivers every weight's derivative.</p>
+    <p>For the simplest case, one sample and the network of chapter 8 with squared error, write \(v_i = w^{\text{out}}_i\) for the output weights, \(z_i = w_i x + b_i\), \(\hat y = b_{\text{out}} + \sum_i v_i\,\sigma(z_i)\) and \(L = (y - \hat y)^2\). With \(\delta = \partial L / \partial \hat y = -2(y - \hat y)\) the chain rule gives</p>
+    $$\frac{\partial L}{\partial b_{\text{out}}} = \delta, \quad \frac{\partial L}{\partial v_i} = \delta\, \sigma(z_i), \quad \frac{\partial L}{\partial w_i} = \delta\, v_i\, \sigma'(z_i)\, x, \quad \frac{\partial L}{\partial b_i} = \delta\, v_i\, \sigma'(z_i),$$
+    <p>where \(\sigma'(z) = \sigma(z)\big(1 - \sigma(z)\big)\). The network trained above uses tanh instead, and only that factor changes: \(\tanh'(z) = 1 - \tanh^2(z)\).</p>
+    <p>For whole layers, with \(Z = WX\) (one sample per column of \(X\); here \(W\) is \(W_{\text{in}}^{\top}\) of chapter 8, one row per neuron), the same rule reads</p>
+    $$\frac{\partial L}{\partial W} = \frac{\partial L}{\partial Z}\, X^{\top}, \qquad \frac{\partial L}{\partial X} = W^{\top}\, \frac{\partial L}{\partial Z},$$
+    <p>which is why a whole network can be differentiated with a handful of matrix products.</p>
+  </details>
+</section>

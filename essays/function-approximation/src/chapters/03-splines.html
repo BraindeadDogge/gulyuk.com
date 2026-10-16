@@ -1,0 +1,23 @@
+<section class="chapter" id="ch3" data-title="Splines">
+  <p class="eyebrow">Chapter 3</p>
+  <h2>Splines: many small pieces instead of one big one</h2>
+  <p>A single polynomial is global: nudge it anywhere and it moves everywhere. The fix is to stop asking one curve to do everything. Connect a handful of simple pieces at points called <abbr data-g="knot">knots</abbr>.</p>
+  <p>In this chapter, and the next ones, the method gets to look at the target function itself rather than at noisy dots. This is function approximation in its pure form.</p>
+  <figure class="figure">
+    <canvas id="c3" data-label="A spline through knots, approximating the target"></canvas>
+    <div class="readout" id="ro3" aria-live="polite"></div>
+    <p class="legend">You control: <span class="p">knot positions and heights</span> and <span class="p">number of knots</span> · Fixed: the shape of each piece</p>
+    <div class="ctrls">
+      <div class="ctrl"><label for="k3"><span>knots</span><output id="k3o"></output></label><input id="k3" type="range" min="3" max="15" step="1" value="6"></div>
+      <div class="ctrl"><label><span>pieces</span></label><div class="row" id="mode3" role="group" aria-label="Piece type"><button type="button" data-v="linear">Straight</button><button type="button" data-v="cubic">Cubic</button></div></div>
+    </div>
+    <div class="row"><button type="button" id="auto3">Auto-place knots</button><button type="button" id="break3">Break it</button><button type="button" id="pin3">Pin to compare</button><button type="button" id="reset3">Reset</button></div><p class="breaknote" id="bn3" aria-live="polite"></p>
+    <figcaption>Fig. {{fig}}. Drag knots, or move the selected one with the arrow keys. Auto-place puts knots where the curve bends most. Changing the target snaps the knots back onto it.</figcaption>
+  </figure>
+  <p>Each piece only cares about its own neighbourhood, so moving one knot changes the curve locally. The price is that you need enough knots, and how many you need depends on how curved the function is. Halving the knot spacing cuts the error of straight pieces by a factor of about {{spline_lin_ratio}}, and of cubic pieces by about {{spline_cub_ratio}}. That is the textbook 4 and 16, measured on a test function.</p>
+  <aside class="aside">A foretaste of chapter 8: a ReLU neuron is exactly one kink. A sum of ReLUs is a piecewise-linear curve, so a layer of them is a spline whose knots can be learned.</aside>
+  <details class="math"><summary>Math (skippable)</summary>
+    <p>Straight pieces: \(\max|f-s|\le \dfrac{h^2}{8}\max|f''|\). Cubic splines: the error shrinks like \(h^4\) when the end conditions suit the function. The measurement above uses \(\sin\pi x\), whose second derivative vanishes at both ends, which is exactly what a natural spline assumes.</p>
+    <p>Among all smooth curves through the knots, the natural cubic spline minimises \(\int f''(x)^2\,dx\), which is where the name comes from: it is the shape a thin flexible ruler takes.</p>
+  </details>
+</section>

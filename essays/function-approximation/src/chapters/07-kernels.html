@@ -1,0 +1,27 @@
+<section class="chapter" id="ch7" data-title="Kernels">
+  <p class="eyebrow">Chapter 7</p>
+  <h2>Kernels: smooth, local, and honest about doubt</h2>
+  <p>Staircases are blunt. A smoother local idea is to place a soft bump at each of a set of positions and add them up, with heights chosen by <abbr data-g="least-squares">least squares</abbr>. The bump here is a Gaussian, and its width is the one dial that matters. Narrow bumps are very local. Wide bumps blend into each other.</p>
+  <p>A <abbr data-g="kernel">kernel</abbr> is the same idea stated as a similarity: two inputs that are close count as similar, and the prediction at a new point is a weighted vote of the data points near it. A <abbr data-g="gaussian-process">Gaussian process</abbr> is a kernel method that also reports how unsure it is. Its answer at each point is a best guess plus a band, and the band is narrow close to the data and widens as you move away.</p>
+  <figure class="figure">
+    <canvas id="c7" role="img" aria-label="Gaussian-bump fit or Gaussian-process fit with an uncertainty band, training points, held-out points and the true curve"></canvas>
+    <div class="readout" id="ro7" aria-live="polite"></div>
+    <p class="legend">You control: <span class="p">the bump width</span> · Learned: the heights (a linear solve) · Fixed: the data and, in the process, the noise level. The pale red band is two standard deviations of the process.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label><span>model</span></label><div class="row" id="mode7" role="group" aria-label="Model"><button type="button" data-v="gp">Gaussian process</button><button type="button" data-v="rbf">Gaussian bumps</button></div></div>
+      <div class="ctrl"><label for="l7"><span>width</span><output id="l7o"></output></label><input id="l7" type="range" min="0.03" max="0.8" step="0.01" value="0.25"></div>
+    </div>
+    <div class="row"><button type="button" id="break7">Break it</button><button type="button" id="pin7">Pin to compare</button><button type="button" id="reset7">Reset</button></div>
+    <p class="breaknote" id="bn7" aria-live="polite"></p>
+    <figcaption>Fig. {{fig}}. Slide the width. In the Gaussian-process mode the band pinches at every dot and widens in the gaps and beyond the ends, where the curve returns to zero. In the bumps mode there are twelve bumps at fixed positions.</figcaption>
+  </figure>
+  <p>Too narrow and the fit is a set of isolated hills that fall back to zero between the dots. Too wide and it is too stiff to follow a bend. In between, the fit is smooth where the polynomial was fragile and local where the Fourier series was global. On the Noisy target the process treats the dots as uncertain and smooths through them; on a clean target it is nearly an interpolant.</p>
+  <p>The band is an honest statement, but only about the model's own assumptions: it says "if the function is as smooth as this width implies". Try the Jump target. No width is right, and the band cannot tell you that.</p>
+  <p>The price is cost. A Gaussian process works with an <span class="mono">n × n</span> table of similarities and solves a linear system with it. The work grows like <span class="mono">n³</span>, which is nothing for thirty dots and a wall for a million.</p>
+  <aside class="aside">Big kernel tables are often close to low rank. Methods such as Nyström and random features replace the full table by a thin factor with <span class="mono">m ≪ n</span> columns, which cuts the cost to roughly <span class="mono">n·m²</span>. The same idea, approximating a large table by a product of thin ones, runs through matrix and tensor factorisation and through low-rank adaptation of large networks.</aside>
+  <details class="math"><summary>Math (skippable)</summary>
+    <p>With kernel \(k(x,x')=\exp\!\big(-(x-x')^2/2\ell^2\big)\), data \(y\), kernel table \(K\) and noise \(\sigma\): mean \(m(x)=k(x)^\top(K+\sigma^2 I)^{-1}y\); variance \(k(x,x)-k(x)^\top(K+\sigma^2 I)^{-1}k(x)\). The bumps model uses \(\sum_j w_j\,k(x,c_j)\) with fixed centres \(c_j\) and ridge least squares for \(w\).</p>
+    <p>The page keeps the noise at least 0.02 so the table stays well conditioned; with duplicate points or a huge width it raises the noise further rather than failing.</p>
+    <p>The noise term acts as <abbr data-g="regularisation">regularisation</abbr>: it keeps the fit from chasing every dot.</p>
+  </details>
+</section>

@@ -1,0 +1,23 @@
+<section class="chapter" id="ch9" data-title="Depth">
+  <p class="eyebrow">Chapter 9</p>
+  <h2>Depth: folding a curve instead of adding bricks</h2>
+  <p>Chapter 8 added neurons side by side. A network can also stack layers, so that each layer feeds the next. Does that buy anything that simply adding more neurons does not?</p>
+  <p>Take a tent: a function that rises from 0 to 1 and falls back to 0. Two ReLU neurons make one. Feed a tent into another tent and the curve folds: its two slopes become four. Fold again and you get eight. Each layer doubles the number of linear pieces, using the same two neurons.</p>
+  <figure class="figure">
+    <canvas id="c9" role="img" aria-label="A sawtooth made by folding, and a one-layer ReLU net with the same number of parameters and evenly spread kinks"></canvas>
+    <div class="readout" id="ro9" aria-live="polite"></div>
+    <p class="legend">You control: <span class="p">the number of folds (layers)</span> · Dark line: the deep net's output. Red line: a one-layer net with the same parameter budget and evenly spread kinks. These weights are constructed, not trained.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label for="l9"><span>layers L</span><output id="l9o"></output></label><input id="l9" type="range" min="1" max="8" step="1" value="4"></div>
+    </div>
+    <div class="row"><button type="button" id="break9">Break it</button><button type="button" id="reset9">Reset</button></div>
+    <p class="breaknote" id="bn9" aria-live="polite"></p>
+    <figcaption>Fig. {{fig}}. Add layers. The dark line gains twice as many teeth each time. The red curve is a single layer given the same number of parameters; it falls behind quickly.</figcaption>
+  </figure>
+  <p>The counting is simple. The deep net uses about 6 parameters per layer, so {{fold_params8}} in total for 8 layers, and draws {{fold_pieces8}} linear pieces. A single layer with the same budget affords {{shallow_w8}} neurons, and a one-layer net with <span class="mono">W</span> neurons cannot have more than <span class="mono">W+1</span> pieces. Depth grows the number of pieces exponentially; width grows it linearly.</p>
+  <p>Two cautions keep this honest. First, the sawtooth is a special function, chosen because folding makes it cheap. Depth is no free lunch for every curve. Second, these weights were written down by hand. Gradient descent is not guaranteed to find them, and the next chapter shows how training can be slow even when a good network exists. This is the third of the errors from chapter 5, optimisation: the family can contain a good answer that training never reaches.</p>
+  <details class="math"><summary>Math (skippable)</summary>
+    <p>On \([0,1]\), \(\operatorname{tent}(u)=2\,\mathrm{relu}(u)-4\,\mathrm{relu}(u-\tfrac12)\). The \(L\)-fold composition has \(2^L\) linear pieces, each of slope \(\pm 2^L\). A one-hidden-layer ReLU net with \(W\) units is piecewise linear with at most \(W+1\) pieces.</p>
+    <p>Telgarsky (2016) makes this precise: some functions computed by deep nets of modest size need exponentially many units if the net is forced to be shallow.</p>
+  </details>
+</section>

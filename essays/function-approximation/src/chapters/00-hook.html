@@ -1,0 +1,26 @@
+<section class="chapter" id="ch0" data-title="Fit it by hand">
+  <p class="eyebrow">Chapter 0</p>
+  <h2>Fit it by hand</h2>
+  <p>Below are 24 noisy measurements of some unknown curve. Drag the seven handles to pull a smooth curve through the cloud.</p>
+  <figure class="figure">
+    <canvas id="c0" data-label="Noisy points and a curve controlled by seven handles"></canvas>
+    <div class="readout" id="ro0" aria-live="polite"></div>
+    <p class="legend">You control: <span class="p">the seven handle heights</span> · Fixed: the points and the handle positions. This figure has its own data.</p>
+    <div class="row"><button type="button" id="fit0">Fit it for me</button><button type="button" id="reset0">Reset</button></div>
+    <figcaption>Fig. {{fig}}. Drag the handles up and down (arrow keys work too). The number is the score: the mean squared distance between the points and your curve.</figcaption>
+  </figure>
+  <p>That score is the <abbr data-g="loss">mean squared error</abbr>, or MSE. Lower is better. Every method on this page is a different answer to one question: how should the curve be built so that this number is small, and stays small on points it has not seen yet?</p>
+  <p>That is the whole job. A neural network, a decision tree and a polynomial are all machines for producing curves like this one, built from different simple parts. We will take the parts one at a time.</p>
+  <details class="math"><summary>Math (skippable): the setup in symbols</summary>
+    <p>Every measurement is a pair \((x_i, y_i)\): the circumstances of the measurement and its result. Behind the points sits a dependency we cannot see, \(f\), and what we record is that dependency plus noise \(\varepsilon_i\):</p>
+    $$y_i = f(x_i) + \varepsilon_i .$$
+    <p>A model is a function \(\hat y = \mathrm{Net}_w(x)\) with adjustable numbers \(w\), its weights. Over \(S\) measurements its score is the average loss, and training means choosing the weights that make the score smallest:</p>
+    $$L_{\text{total}}(w) = \frac{1}{S}\sum_{s=1}^{S} L\big(\mathrm{Net}_w(x_s),\, y_s\big), \qquad w^{*} = \arg\min_{w}\; L_{\text{total}}(w).$$
+    <p>With the squared distance as the loss this is the mean squared error of the figure above. The absolute distance gives the mean absolute error, which treats a big miss as only proportionally worse:</p>
+    $$\mathrm{MSE} = \frac{1}{S}\sum_{s=1}^{S} \lVert y_s - \hat y_s \rVert^{2}, \qquad \mathrm{MAE} = \frac{1}{S}\sum_{s=1}^{S} \lvert y_s - \hat y_s \rvert .$$
+    <p>A loss is not the same thing as a metric. A metric answers a question you care about, such as "how often is the answer within \(\epsilon\)?":</p>
+    $$\mathrm{Acc}_{\epsilon} = \frac{1}{S}\sum_{i=1}^{S}\big[\,\lvert y_i - \hat y_i\rvert < \epsilon\,\big].$$
+    <p>It is a fine metric and a useless loss. Nudge \(\hat y_i\) a little and every bracket stays at 0 or 1, so \(\partial\,\mathrm{Acc}_{\epsilon} / \partial \hat y_i = 0\) almost everywhere, and a method that follows slopes gets no signal. A loss has to change smoothly when the prediction moves, and fall as the prediction gets closer to \(y\).</p>
+  </details>
+  <aside class="aside">"Fit it for me" runs ordinary least squares with a degree-5 polynomial and reads the handle heights off it.</aside>
+</section>

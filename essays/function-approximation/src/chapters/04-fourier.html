@@ -1,0 +1,23 @@
+<section class="chapter" id="ch4" data-title="Fourier">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>Fourier: waves instead of bumps</h2>
+  <p>Splines are local. The opposite idea is to build the curve from waves that fill the whole interval: a constant, then half a cosine wave across the interval, then a full wave, then one and a half, and so on. Add enough of them and a surprisingly wide range of curves comes out.</p>
+  <p>Unlike powers of <span class="mono">x</span>, these waves are <abbr data-g="orthogonal">orthogonal</abbr>, which means they do not interfere with each other. Each coefficient is found on its own, by a single integral, and the best fit with <span class="mono">K</span> waves is simply the first <span class="mono">K</span>+1 terms (the constant plus <span class="mono">K</span> waves) of the best fit with more.</p>
+  <figure class="figure">
+    <canvas id="c4" role="img" aria-label="Cosine series with K harmonics approximating the target"></canvas>
+    <div class="readout" id="ro4" aria-live="polite"></div>
+    <p class="legend">You control: <span class="p">number of waves K</span> · Fixed: the frequencies. The coefficients are computed from the target.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label for="k4"><span>waves K</span><output id="k4o"></output></label><input id="k4" type="range" min="0" max="60" step="1" value="6"></div>
+    </div>
+    <div class="row"><button type="button" id="break4">Break it</button><button type="button" id="pin4">Pin to compare</button><button type="button" id="reset4">Reset</button></div><p class="breaknote" id="bn4" aria-live="polite"></p>
+    <figcaption>Fig. {{fig}}. Increase K. On Smooth the fit sharpens quickly. Then press "Break it", which switches to the Jump target.</figcaption>
+  </figure>
+  <p>Smooth curves need few waves. A jump is another story. Near the jump the partial sums overshoot by about {{gibbs_pct}}% of the jump height, and adding waves only squeezes the overshoot closer to the jump without making it smaller. This is the <abbr data-g="gibbs-phenomenon">Gibbs phenomenon</abbr>. A basis made of global waves cannot make one local discontinuity cheap.</p>
+  <aside class="aside">Why cosines on [−1, 1]? Mirroring the function around the end removes the jump a plain sine and cosine series would see there whenever the two end values differ. A kink remains wherever the slope at the end is not zero, and that kink still limits how fast the error shrinks.</aside>
+  <aside class="aside">Wavelets keep the idea of a set of building blocks but make every piece a small wave that lives in one place and at one scale. A jump then costs a few coefficients near it instead of ripples everywhere, which is why wavelets are used in image compression such as JPEG 2000.</aside>
+  <details class="math"><summary>Math (skippable)</summary>
+    <p>We use \(f(x)\approx\sum_{k=0}^{K}c_k\cos\!\big(k\pi\,\tfrac{x+1}{2}\big)\). The cosines are orthogonal on \([-1,1]\), so \(c_k=\dfrac{\int f\,\phi_k}{\int\phi_k^2}\), with \(\int\phi_0^2=2\) and \(\int\phi_k^2=1\) for \(k\ge1\).</p>
+    <p>The smoother the mirrored extension of \(f\) is, the faster \(c_k\) decays: like \(1/k^2\) if it has a kink at the ends, like \(1/k\) if it has a jump, which is why the ripples never fade.</p>
+  </details>
+</section>

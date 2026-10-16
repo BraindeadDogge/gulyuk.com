@@ -1,0 +1,26 @@
+(function (AP) {
+  AP.glossary = [
+    { key: 'loss', term: 'Loss', def: 'A single number scoring how far a model’s output is from the data. Training tries to make it small. Here it is mostly the mean squared error: the average of the squared gaps.' },
+    { key: 'least-squares', term: 'Least squares', def: 'Choosing coefficients that minimise the sum of squared gaps between a model and the data. For a model that is linear in its coefficients it is a single linear solve.' },
+    { key: 'basis-function', term: 'Basis function', def: 'One of the simple pieces a curve is built from: a power of x, a cosine, a bump, a kink. The curve is a weighted sum of them.' },
+    { key: 'overfitting', term: 'Overfitting', def: 'Fitting the noise in the training points instead of the curve behind them: low training error, high test error.' },
+    { key: 'interpolation', term: 'Interpolation', def: 'Passing exactly through every data point.' },
+    { key: 'extrapolation', term: 'Extrapolation', def: 'Predicting outside the range the model was built on, where nothing was measured.' },
+    { key: 'knot', term: 'Knot', def: 'A point where a piecewise curve may change its formula, such as a bend in a spline.' },
+    { key: 'orthogonal', term: 'Orthogonal', def: 'Two pieces are orthogonal when the integral of their product is zero. Each coefficient can then be computed without looking at the others.' },
+    { key: 'gibbs-phenomenon', term: 'Gibbs phenomenon', def: 'The overshoot of a Fourier partial sum next to a jump. It keeps the same height however many waves you add; it only gets narrower.' },
+    { key: 'residual', term: 'Residual', def: 'What is left over after a fit: the data minus the model.' },
+    { key: 'bias', term: 'Bias', def: 'Error from a model being too rigid to follow the true curve, however much data it sees.' },
+    { key: 'variance', term: 'Variance', def: 'Error from a model changing a lot when the noise in its data changes.' },
+    { key: 'boosting', term: 'Boosting', def: 'Building a model as a sum of small pieces, each fitted to the residual left by the pieces before it.' },
+    { key: 'kernel', term: 'Kernel', def: 'A function that says how similar two inputs are. A Gaussian kernel says that nearby points have similar values.' },
+    { key: 'gaussian-process', term: 'Gaussian process', def: 'A kernel method that returns not only a prediction but also how uncertain it is, according to the kernel’s assumptions.' },
+    { key: 'regularisation', term: 'Regularisation', def: 'Any penalty or constraint that keeps a model from fitting the noise, such as a ridge term or stopping training early.' },
+    { key: 'spectral-bias', term: 'Spectral bias', def: 'The tendency of ordinary networks trained by gradient descent to fit the slow, smooth parts of a function before the fast, wiggly ones.' },
+    { key: 'curse-of-dimensionality', term: 'Curse of dimensionality', def: 'As the number of inputs grows, data gets sparse so fast that “nearby” stops meaning much, and grids need exponentially many points.' },
+    { key: 'gradient', term: 'Gradient', def: 'The list of slopes of the loss with respect to every weight. It points uphill, so training steps the other way.' },
+    { key: 'gradient-descent', term: 'Gradient descent', def: 'Training by repeatedly nudging every weight a little against the gradient of the loss, so the loss goes down.' },
+    { key: 'backpropagation', term: 'Backpropagation', def: 'Computing every weight’s slope in one backward sweep through the network, by applying the chain rule from the output to the input.' },
+    { key: 'universal-approximation', term: 'Universal approximation', def: 'Theorems saying a network with enough neurons can approximate any continuous function on a bounded interval. They do not say how many neurons, or how to find them.' },
+  ];
+})(globalThis.AP = globalThis.AP || {});

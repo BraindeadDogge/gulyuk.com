@@ -1,0 +1,28 @@
+<section class="chapter" id="ch1" data-title="Polynomials">
+  <p class="eyebrow">Chapter 1</p>
+  <h2>Polynomials: the first thing everyone tries</h2>
+  <p>A polynomial of degree <span class="mono">d</span> is a sum of powers, <span class="mono">1, x, x², …, xᵈ</span>, each with its own coefficient. Choosing the coefficients by <abbr data-g="least-squares">least squares</abbr> is a single linear solve, so there is nothing to train and nothing to tune except the degree.</p>
+  <p>The pieces <span class="mono">1, x, x², …, xᵈ</span> are the <abbr data-g="basis-function">basis</abbr>: a menu of simple shapes. A fit is a recipe that says how much of each shape to add up, and the coefficients are the amounts. Different menus can produce exactly the same set of curves. The figure lets you pick between two menus for degree-<span class="mono">d</span> polynomials: <b>Powers of x</b>, the one above, and <b>Chebyshev</b>, described below the figure.</p>
+  <p>Here the polynomial sees only the 30 dots. The ink-coloured line is the true function, which the fit never gets to see.</p>
+  <figure class="figure">
+    <canvas id="c1" role="img" aria-label="Polynomial fit of chosen degree to training points, with the true function"></canvas>
+    <div class="readout" id="ro1" aria-live="polite"></div>
+    <p class="legend">You control: <span class="p">degree d</span> · Learned by least squares: the coefficients · Fixed: the data</p>
+    <div class="ctrls">
+      <div class="ctrl"><label for="deg1"><span>degree d</span><output id="deg1o"></output></label><input id="deg1" type="range" min="0" max="20" step="1" value="3"></div>
+      <div class="ctrl"><label><span>basis</span></label><div class="row" id="basis1" role="group" aria-label="Basis"><button type="button" data-v="mono">Powers of x</button><button type="button" data-v="cheb">Chebyshev</button></div></div>
+    </div>
+    <div class="row"><button type="button" id="break1">Break it</button><button type="button" id="pin1">Pin to compare</button><button type="button" id="reset1">Reset</button></div><p class="breaknote" id="bn1" aria-live="polite"></p>
+    <figcaption>Fig. {{fig}}. Raise the degree. Filled dots are training points; hollow dots are held-out measurements. The grey band is the gap between your fit and the truth, and the test error is measured against the true curve. Try the "Noisy points" target in the bar above.</figcaption>
+  </figure>
+  <p>Watch the two errors. The training error only ever goes down. The test error, measured against the true curve, falls and then climbs: with enough freedom the polynomial starts chasing the noise between the dots instead of the curve behind them.</p>
+  <p>The Chebyshev basis is a different menu for the same curves. Its <span class="mono">k</span>-th piece, <span class="mono">T<sub>k</sub>(x) = cos(k·arccos x)</span> on the interval from −1 to 1, is a polynomial of degree <span class="mono">k</span> that wiggles up and down between −1 and 1 exactly <span class="mono">k</span> times. Compare that with the powers: <span class="mono">x¹⁵</span> and <span class="mono">x¹⁷</span> are both almost flat near zero and both shoot up at the ends, so they look nearly the same, and a solver has trouble telling them apart. Every Chebyshev piece has a visibly different rhythm, so the solver never confuses them. Any polynomial of degree <span class="mono">d</span> can be written in either basis; only the arithmetic changes, not the set of curves you can reach.</p>
+  <p>There is a second, separate failure, and it is about arithmetic rather than <abbr data-g="overfitting">overfitting</abbr>. Write the same polynomial in powers of <span class="mono">x</span> and push the degree past about 15: the columns of the problem become nearly identical, the solve loses most of its digits, and the page flags it. Chebyshev polynomials describe exactly the same family of curves with a well-behaved solve, so the warning goes away. It does not cure overfitting: on noisy points a high-degree Chebyshev fit can be just as wild. The choice of <abbr data-g="basis-function">basis</abbr> is a numerical decision, not a mathematical one.</p>
+  <aside class="aside">Weierstrass (1885): any continuous function on an interval can be approximated as closely as you like by a polynomial. That tells you a good polynomial exists. It does not tell you that a fit to 30 noisy points will find it.</aside>
+  <details class="math"><summary>Math (skippable)</summary>
+    <p>Weierstrass: for continuous \(f\) on \([a,b]\) and any \(\varepsilon>0\) there is a polynomial \(p\) with \(\max_{x}|f(x)-p(x)|<\varepsilon\).</p>
+    <p>Taylor's polynomial \(\sum_k f^{(k)}(a)(x-a)^k/k!\) is the local version: excellent near \(a\), useless far away. Even for the perfectly smooth \(1/(1+x^2)\) the series around 0 diverges for \(|x|>1\), because the function has poles at \(x=\pm i\) in the complex plane.</p>
+    <p>The Chebyshev pieces satisfy \(T_0=1,\ T_1=x,\ T_{k+1}=2xT_k-T_{k-1}\), which is another way to write \(T_k(\cos\vartheta)=\cos(k\vartheta)\). They are also orthogonal on \([-1,1]\) with weight \(1/\sqrt{1-x^2}\), which is what keeps the columns of \(\Phi\) well separated.</p>
+    <p>Least squares solves \(\min_w \|\Phi w - y\|^2\) where \(\Phi_{ij}=\phi_j(x_i)\). The monomial columns \(x^j\) become almost parallel as \(j\) grows, so \(\Phi^\top\Phi\) is nearly singular.</p>
+  </details>
+</section>

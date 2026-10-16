@@ -1,0 +1,30 @@
+<div id="progress" aria-hidden="true"></div>
+<nav id="toc" class="contents" aria-label="Contents">
+  <p class="label">Contents</p>
+  <ol></ol>
+</nav>
+<div id="bar" class="bar" hidden role="group" aria-label="Target function for all figures">
+  <span class="bar-l">Target</span>
+  <div class="chips" id="chips">
+    <button type="button" data-v="smooth">Smooth</button>
+    <button type="button" data-v="wiggly">Wiggly</button>
+    <button type="button" data-v="jump">Jump</button>
+    <button type="button" data-v="noisy">Noisy points</button>
+  </div>
+  <label class="bar-select">
+    <span class="visually-hidden">Target function</span>
+    <select id="target-select">
+      <option value="smooth">Smooth</option>
+      <option value="wiggly">Wiggly</option>
+      <option value="jump">Jump</option>
+      <option value="noisy">Noisy points</option>
+    </select>
+  </label>
+  <button type="button" id="reshuffle" title="New noise sample and alternate wiggly target">Reshuffle</button>
+  <span id="notice" role="status" aria-live="polite"></span>
+</div>
+<div class="essay">
+<!--CHAPTERS-->
+<p class="outro"><a href="#" id="reset-all">Reset all sliders</a></p>
+<p class="outro muted">The notation in the math boxes on loss, neurons and training follows Part 2 of the Trainable Networks lecture by Mikhail Romanov and Igor Slinko.</p>
+</div>

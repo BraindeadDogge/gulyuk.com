@@ -1,0 +1,43 @@
+<section class="chapter" id="ch11" data-title="Which tool when">
+  <p class="eyebrow">Chapter 11</p>
+  <h2>Which tool, when</h2>
+  <p>Several figures above have a "Pin to compare" button (chapters 1, 3, 4, 6, 7 and 8). Pin a few fits and they land here, drawn on the same target with their error, their parameter count and the time they took to compute.</p>
+  <figure class="figure">
+    <canvas id="c11a" role="img" aria-label="All pinned fits drawn on the current target"></canvas>
+    <ul class="pins" id="pinlist" aria-live="polite"></ul>
+    <figcaption>Fig. {{fig}}. The pinned fits on the current target. Change the target in the bar and pins are cleared, because errors on different targets cannot be compared.</figcaption>
+  </figure>
+  <p>The comparison that matters most is what happens outside the data (<abbr data-g="extrapolation">extrapolation</abbr>). Here the same fits are drawn beyond the interval they were built on (shaded), where the target keeps going.</p>
+  <figure class="figure short">
+    <canvas id="c11b" role="img" aria-label="Pinned fits extrapolated beyond the data interval"></canvas>
+    <figcaption>Fig. {{fig}}. Beyond the shaded region nothing was measured. Polynomials explode, splines continue in a straight line, cosine series repeat, neighbours and stumps stay flat, and kernel fits fade back to zero.</figcaption>
+  </figure>
+  <h3 class="eyebrow" style="margin-top:32px">Pick your case</h3>
+  <div class="row" id="picks" role="group" aria-label="Pick your case">
+    <button type="button" data-v="smooth">A smooth function I can sample anywhere</button>
+    <button type="button" data-v="kinky">A function with a jump or a kink</button>
+    <button type="button" data-v="noisy">A few noisy measurements</button>
+    <button type="button" data-v="dims">Many input columns</button>
+    <button type="button" data-v="sure">I need to know how sure it is</button>
+  </div>
+  <div class="tablewrap" tabindex="0" role="region" aria-label="Comparison table of the methods, scrollable">
+    <table id="cmp">
+      <caption class="visually-hidden">Twelve ways to approximate a function, compared by basis, parameters, error rate, behaviour in many dimensions, extrapolation, noise, uncertainty, cost and what each is best at.</caption>
+      <thead><tr><th scope="col">Method</th><th scope="col">Basis</th><th scope="col">Parameters</th><th scope="col">Error rate</th><th scope="col">Many dimensions</th><th scope="col">Beyond the data</th><th scope="col">Noise</th><th scope="col">Uncertainty</th><th scope="col">Cost</th><th scope="col">Best at</th></tr></thead>
+      <tbody>
+        <tr data-id="poly"><th scope="row">Polynomial fit</th><td>Global</td><td>Linear</td><td>Fast for smooth functions, if the degree is moderate</td><td>Terms explode</td><td>Explodes</td><td>Overfits at high degree</td><td>Not built in (classical confidence bands exist)</td><td>Cheap</td><td>Few points, smooth trend</td></tr>
+        <tr data-id="cheb"><th scope="row">Chebyshev interpolation</th><td>Global</td><td>Linear</td><td>Geometric for analytic functions</td><td>Grids explode</td><td>Explodes</td><td>Interpolates the noise</td><td>Not built in</td><td>Cheap</td><td>Smooth functions you can sample anywhere</td></tr>
+        <tr data-id="spline"><th scope="row">Splines</th><td>Local</td><td>Linear</td><td>h² straight, h⁴ cubic</td><td>Grids explode</td><td>Straight line</td><td>Plain splines interpolate noise</td><td>Not built in</td><td>Cheap</td><td>One-dimensional curves, kinks and jumps with enough knots</td></tr>
+        <tr data-id="fourier"><th scope="row">Cosine / Fourier series</th><td>Global</td><td>Linear</td><td>Set by smoothness; a kink at the ends or a jump slows it, and Gibbs ripples at jumps</td><td>Grids explode</td><td>Repeats</td><td>Truncation smooths</td><td>Not built in</td><td>Cheap (fast transforms)</td><td>Smooth or periodic signals</td></tr>
+        <tr data-id="knn"><th scope="row">Nearest neighbours</th><td>Local</td><td>None fitted: the data is the model</td><td>Slow: a staircase, so error shrinks like the spacing</td><td>Degrades fast (curse of dimensionality)</td><td>Constant</td><td>Averaging k neighbours smooths; k = 1 copies the noise</td><td>Not built in</td><td>Cheap to build, scans the data to predict</td><td>Quick baselines, jumps, local patterns</td></tr>
+        <tr data-id="boost"><th scope="row">Boosted stumps and trees</th><td>Local, learned splits</td><td>Nonlinear (split positions)</td><td>Staircase: slow on smooth curves, fine at jumps</td><td>Copes when only a few inputs matter</td><td>Constant</td><td>Small steps and early stopping limit overfitting</td><td>Not built in</td><td>Cheap training rounds</td><td>Tables of mixed inputs, jumps</td></tr>
+        <tr data-id="rbf"><th scope="row">Gaussian bumps (RBF)</th><td>Local, smooth</td><td>Linear weights, nonlinear width</td><td>Fast for smooth functions when the bumps overlap</td><td>Needs data to fill the space</td><td>Fades to zero</td><td>A ridge term or fewer bumps</td><td>Not built in</td><td>Cheap (one linear solve)</td><td>Smooth functions from scattered points</td></tr>
+        <tr data-id="gp"><th scope="row">Gaussian process</th><td>Kernel bumps on the data</td><td>Linear weights, nonlinear kernel settings</td><td>Fast for smooth functions if the kernel fits</td><td>Needs data to fill the space</td><td>Reverts to the mean, with a wide band</td><td>Explicit noise term</td><td>Yes, if the kernel's assumptions hold</td><td>Grows like n³ in the number of points</td><td>Small data where you need error bars</td></tr>
+        <tr data-id="nn"><th scope="row">One-hidden-layer network</th><td>Learned bricks</td><td>Nonlinear</td><td>Can beat grids when the target has structure</td><td>Can cope</td><td>Straight lines (ReLU)</td><td>Needs regularisation</td><td>Not built in (ensembles and Bayesian variants exist)</td><td>Training</td><td>Flexible shapes, many inputs</td></tr>
+        <tr data-id="deep"><th scope="row">Deep network</th><td>Learned compositions</td><td>Nonlinear</td><td>Depth can multiply the linear pieces (chapter 9)</td><td>Can cope</td><td>Straight lines (ReLU)</td><td>Needs regularisation</td><td>Not built in</td><td>Training</td><td>Structured, high-dimensional data</td></tr>
+        <tr data-id="ff"><th scope="row">Network + Fourier features</th><td>Learned, with fixed waves as inputs</td><td>Nonlinear</td><td>Reaches fine detail faster than a plain network</td><td>Aimed at few inputs, such as coordinates</td><td>Depends on the chosen frequencies</td><td>Too high a scale fits the noise</td><td>Not built in</td><td>Training</td><td>Fine detail from coordinates (images, signals)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>These are rules of thumb, not laws. Which row wins depends on how many inputs you have, how smooth the function is, how noisy the data is, and what a mistake costs. If you remember one thing from this page: every method here is a set of simple pieces (a dictionary) plus a rule for choosing the coefficients, and the interesting question is what each dictionary makes cheap and what it makes expensive.</p>
+</section>

@@ -1,0 +1,27 @@
+<section class="chapter" id="ch6" data-title="Neighbours and trees">
+  <p class="eyebrow">Chapter 6</p>
+  <h2>Neighbours, stumps and boosting: curves made of steps</h2>
+  <p>Here is a model with almost no mathematics. To predict at a new point, look at the nearest dots and average their heights. That is <span class="mono">k</span>-nearest neighbours. The curve it draws is a staircase, because the answer only changes when a different dot becomes one of the nearest.</p>
+  <p>The second model builds a staircase on purpose. A <em>stump</em> is a single step: one cut position, one height on each side. <abbr data-g="boosting">Boosting</abbr> adds stumps one at a time, and each new stump is fitted to the <abbr data-g="residual">residual</abbr>, the part the sum so far still gets wrong.</p>
+  <figure class="figure">
+    <canvas id="c6a" role="img" aria-label="Nearest-neighbour or boosted-stump fit to the training points, with held-out points and the true curve"></canvas>
+    <canvas id="c6b" class="small" hidden role="img" aria-label="Residuals after the current stumps, and the step the next stump will add"></canvas>
+    <div class="readout" id="ro6" aria-live="polite"></div>
+    <p class="legend">You control: <span class="p">the number of neighbours k, or the number of stumps</span> · Fixed: the data. Nothing here is smooth, and nothing is extrapolated: outside the dots the curve stays flat.</p>
+    <div class="ctrls">
+      <div class="ctrl"><label><span>model</span></label><div class="row" id="mode6" role="group" aria-label="Model"><button type="button" data-v="knn">Nearest neighbours</button><button type="button" data-v="boost">Boosted stumps</button></div></div>
+      <div class="ctrl" id="k6wrap"><label for="k6"><span>neighbours k</span><output id="k6o"></output></label><input id="k6" type="range" min="1" max="30" step="1" value="3"></div>
+      <div class="ctrl" id="m6wrap" hidden><label for="m6"><span>stumps</span><output id="m6o"></output></label><input id="m6" type="range" min="0" max="60" step="1" value="6"></div>
+    </div>
+    <div class="row"><button type="button" id="break6">Break it</button><button type="button" id="pin6">Pin to compare</button><button type="button" id="reset6">Reset</button></div>
+    <p class="breaknote" id="bn6" aria-live="polite"></p>
+    <figcaption>Fig. {{fig}}. Filled dots train the model, hollow dots are held out. In boosting mode the lower panel shows what is still wrong (the dark dots) and the step the next stump will add (the red line). Try the Jump target: steps are exactly what it needs.</figcaption>
+  </figure>
+  <p>Both models are <em>local</em> and <em>piecewise constant</em>. They handle a jump with no ringing at all, which Fourier cannot. They pay for it on smooth curves, where a staircase needs many steps to look like a slope. Averaging more neighbours smooths out noise, and fewer stumps do the same; the extreme settings (one neighbour, or very many stumps) copy the noise.</p>
+  <aside class="aside">Boosting is also a first look at a theme that returns in chapter 8: a model made of many simple pieces whose positions are <em>learned</em>, not fixed in advance.</aside>
+  <p>The weakness of neighbours is dimension. Spread points evenly through a unit cube and ask how long a side must be to hold one tenth of them. In one dimension it is 0.1 of the range. In ten dimensions it is {{cube_edge10}}: almost the whole range in every direction. "Nearby" no longer means local. This is the <abbr data-g="curse-of-dimensionality">curse of dimensionality</abbr>, and it is why methods that can ignore useless inputs, such as boosted trees, remain popular on tables of many columns.</p>
+  <details class="math"><summary>Math (skippable)</summary>
+    <p>A stump \(s(x)=\ell\) for \(x\le t\) and \(r\) otherwise, fitted to residuals \(e_i\), chooses \(t\) to maximise \(\frac{(\sum_{\text{left}}e_i)^2}{n_L}+\frac{(\sum_{\text{right}}e_i)^2}{n_R}\); \(\ell\) and \(r\) are the two averages. With learning rate \(\eta=0.5\) the model after \(m\) steps is \(\bar y+\eta\sum_{j\le m}s_j(x)\).</p>
+    <p>A cube of side \(a\) holds a fraction \(a^d\) of uniform data, so holding a fraction \(p\) needs \(a=p^{1/d}\).</p>
+  </details>
+</section>

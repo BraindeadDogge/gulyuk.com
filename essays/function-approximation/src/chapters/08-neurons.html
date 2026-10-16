@@ -1,0 +1,44 @@
+<section class="chapter" id="ch8" data-title="Neurons">
+  <p class="eyebrow">Chapter 8</p>
+  <h2>Neurons: bricks you can tune</h2>
+  <p>So far the building blocks were fixed in advance: powers, cosines, hat functions. A neural network changes one thing. Each brick comes with its own knobs, and the knobs are part of what gets fitted.</p>
+  <p>The classic brick is a squashed S-curve, the sigmoid. Four knobs bend it into any rising or falling step you like.</p>
+  <figure class="figure short">
+    <canvas id="c8a" role="img" aria-label="One sigmoid neuron with four adjustable parameters"></canvas>
+    <p class="legend">y = <span class="p">w′</span>·σ(<span class="p">w</span>·x + <span class="p">b</span>) + <span class="p">b′</span> · You control: all four. Dashed: the plain σ(x).</p>
+    <div class="ctrls">
+      <div class="ctrl"><label for="a-w"><span>w</span><output id="a-wo"></output></label><input id="a-w" type="range" min="-6" max="6" step="0.1" value="1"></div>
+      <div class="ctrl"><label for="a-b"><span>b</span><output id="a-bo"></output></label><input id="a-b" type="range" min="-8" max="8" step="0.1" value="0"></div>
+      <div class="ctrl"><label for="a-w2"><span>w′</span><output id="a-w2o"></output></label><input id="a-w2" type="range" min="-2" max="2" step="0.05" value="1"></div>
+      <div class="ctrl"><label for="a-b2"><span>b′</span><output id="a-b2o"></output></label><input id="a-b2" type="range" min="-1.5" max="1.5" step="0.05" value="0"></div>
+    </div>
+    <div class="row"><button type="button" id="reset8a">Reset</button></div>
+    <figcaption>Fig. {{fig}}. w sets the steepness, b the position, w′ the height (negative flips it), b′ the vertical shift.</figcaption>
+  </figure>
+  <p>Now add many such bricks. Each one contributes one step at its own position, with its own height. A sum of steps is a staircase, and a fine enough staircase hugs any curve.</p>
+  <figure class="figure">
+    <canvas id="c8b" role="img" aria-label="Sum of N neurons approximating the target"></canvas>
+    <div class="readout" id="ro8" aria-live="polite"></div>
+    <p class="legend">You control: <span class="p">number of neurons N</span> and <span class="p">the activation</span> · Fixed here: positions and heights are read off the target</p>
+    <div class="ctrls">
+      <div class="ctrl"><label for="n8"><span>neurons N</span><output id="n8o"></output></label><input id="n8" type="range" min="1" max="40" step="1" value="8"></div>
+      <div class="ctrl" id="s8wrap" hidden><label for="s8"><span>slope</span><output id="s8o"></output></label><input id="s8" type="range" min="1" max="40" step="1" value="8"></div>
+      <div class="ctrl"><label><span>activation</span></label><div class="row" id="kind8" role="group" aria-label="Activation"><button type="button" data-v="step">Step</button><button type="button" data-v="sigmoid">Sigmoid</button><button type="button" data-v="relu">ReLU</button></div></div>
+    </div>
+    <div class="row"><button type="button" id="pin8">Pin to compare</button><button type="button" id="reset8">Reset</button></div>
+    <figcaption>Fig. {{fig}}. Dotted verticals mark where each neuron switches on. Start with Step, then try ReLU at the same N.</figcaption>
+  </figure>
+  <p>Replace the step by a ReLU, which is zero up to a point and then climbs with a constant slope. Each neuron now contributes one kink instead of one step, and the sum is a piecewise-linear curve. With the same number of neurons the error is far smaller: this is the same family of curves as the straight splines of chapter 3, but with knots that a network is free to move.</p>
+  <p>One honest caveat. Here the positions and heights are read off the target by a formula. A real network finds them by training, which can get stuck or generalise badly. The demo shows what a network could represent, not what training will find.</p>
+  <details class="math"><summary>Math (skippable): the network as a formula</summary>
+    <p>The sigmoid is \(\sigma(z) = 1/(1+e^{-z})\), and the single neuron of the first figure is \(y = w'\,\sigma(wx+b) + b'\). Add \(N\) of them and keep one output bias, and you have the whole two-layer network:</p>
+    $$\hat y = b_{\text{out}} + \sum_{i=1}^{N} w^{\text{out}}_i\, \sigma(w_i x + b_i).$$
+    <p>Make a neuron steeper (\(w_i \to \infty\), keeping its switching point \(x_i = -b_i / w_i\) in place) and the sigmoid turns into the step \(\theta\), which is 0 for negative arguments and 1 for positive ones. The sum is then a staircase, \(\hat y = b_{\text{out}} + \sum_i w^{\text{out}}_i\,\theta(x - x_i)\). Multiply a step by its own argument and you get the ReLU; multiply the sigmoid by its argument and you get its smooth cousin, SiLU:</p>
+    $$\mathrm{ReLU}(x) = x\,\theta(x), \qquad \mathrm{SiLU}(x) = x\,\sigma(x).$$
+    <p>With several inputs the weights are stacked into matrices, one column of \(W_{\text{in}}\) per neuron. Then, for one input vector \(x\) or for a whole batch \(X\) with one sample per column,</p>
+    $$\hat y = b_{\text{out}} + W_{\text{out}}^{\top}\,\sigma\!\big(W_{\text{in}}^{\top} x + b_{\text{in}}\big), \qquad Y = b_{\text{out}} + W_{\text{out}}^{\top}\,\sigma\!\big(W_{\text{in}}^{\top} X + b_{\text{in}}\big).$$
+    <p>A linear combination of sigmoids is the whole system: the only nonlinear step is \(\sigma\), applied to one neuron at a time.</p>
+  </details>
+  <aside class="aside"><abbr data-g="universal-approximation">Universal approximation</abbr> (Cybenko 1989, Hornik 1991): a network with one hidden layer and enough neurons can approximate any continuous function on a bounded interval. It says nothing about how many neurons, or how to find them.</aside>
+  <aside class="aside">Kolmogorov–Arnold networks (Liu and colleagues, 2024) move the learnable part from the nodes to the edges: every edge carries its own one-dimensional spline, and nodes simply add. The idea echoes this chapter, a sum of tunable one-dimensional pieces. Whether they match ordinary networks at equal cost is still debated, so treat them as an open question, not a verdict.</aside>
+</section>

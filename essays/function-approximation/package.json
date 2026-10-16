@@ -1,0 +1,9 @@
+{
+  "name": "function-approximation-essay",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test tests/*.test.js"
+  }
+}
