@@ -33,7 +33,7 @@ function load() {
       <p class="mono muted">This is a LinkedIn post. Loading it contacts LinkedIn, which may set cookies.</p>
       <p class="actions">
         <button v-if="embedSrc" type="button" class="btn" @click="load">Load LinkedIn post{{ props.label ? ` from ${props.label}` : '' }}</button>
-        <a v-if="openUrl" :href="openUrl" rel="noopener noreferrer" class="mono">Open on LinkedIn ↗</a>
+        <a v-if="openUrl" :href="openUrl" target="_blank" rel="noopener noreferrer" class="mono">Open on LinkedIn ↗</a>
       </p>
     </div>
     <iframe

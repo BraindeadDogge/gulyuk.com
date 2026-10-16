@@ -58,7 +58,11 @@ export default defineNuxtConfig({
       markdown: {
         highlight: { theme: { default: 'min-light', dark: 'min-dark' } },
         remarkPlugins: { 'remark-math': {} },
-        rehypePlugins: { 'rehype-katex': { options: { output: 'mathml' } } },
+        rehypePlugins: {
+          'rehype-katex': { options: { output: 'mathml' } },
+          // Links that leave the site open in a new tab.
+          'rehype-external-links': { options: { target: '_blank', rel: ['noopener', 'noreferrer'] } },
+        },
       },
     },
   },

@@ -31,7 +31,7 @@ useSchemaOrg([
       <p class="headline">{{ cv.profile.headline }}</p>
       <p class="mono muted contact">
         {{ cv.profile.location }}
-        <template v-for="l in cv.profile.links" :key="l.url"> · <a :href="l.url" rel="me noopener">{{ l.label }}</a></template>
+        <template v-for="l in cv.profile.links" :key="l.url"> · <a :href="l.url" target="_blank" rel="me noopener noreferrer">{{ l.label }}</a></template>
         <template v-if="cv.profile.email"> · <a :href="`mailto:${cv.profile.email}`">{{ cv.profile.email }}</a></template>
       </p>
       <p class="no-print"><a class="pdf mono" href="/pdf/Grigory-Gulyuk-CV.pdf" download>Download PDF ↓</a></p>
