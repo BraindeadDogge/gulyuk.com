@@ -18,6 +18,11 @@ from this repository on every push to `main`. It needs no environment variables 
 - Namecheap **email forwarding** is on. It depends on Namecheap's DNS, so when nameservers move to Cloudflare
   these records must be recreated in Cloudflare (step 2, item 5) or forwarded mail stops arriving.
 
+**Status (16 Oct 2026): done.** The Cloudflare zone is active, the records and the settings below are in
+place, the Railway certificate is issued, and the apex record is proxied. `http`, `https`, `www` and
+`http://www` all end at `https://gulyuk.com`. Cloudflare settings applied: SSL mode Full (strict), Always Use
+HTTPS, Automatic HTTPS Rewrites, minimum TLS 1.2, and a 301 redirect rule for `www.gulyuk.com`.
+
 ## 1. Railway service
 
 1. In the Railway dashboard create a project and choose **Deploy from GitHub repo**, then pick
@@ -63,7 +68,11 @@ from this repository on every push to `main`. It needs no environment variables 
    | Type  | Name | Content                    | Proxy status |
    |-------|------|----------------------------|--------------|
    | CNAME | `@`  | `wxrkhi9q.up.railway.app`  | **DNS only** (grey cloud) |
-   | TXT   | only if Railway lists one | the value Railway shows | n/a |
+   | TXT   | `_railway-verify` | `railway-verify=...` (the exact value is in the Railway dashboard under Networking) | n/a |
+
+   **The TXT record is required.** Railway's CLI prints only the CNAME, but without the TXT record the domain
+   stays at "validating ownership" and Railway never issues a certificate. Verification took about 10 minutes
+   after the record was added.
 
    Cloudflare allows a CNAME on the bare domain; it flattens it automatically.
 4. Wait until Railway shows the domain as verified and the certificate as issued (a few minutes). The grey cloud
