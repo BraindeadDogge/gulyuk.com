@@ -24,9 +24,8 @@ describe('content/ideas', () => {
       it('has a lowercase, hyphenated filename (it becomes the URL)', () => {
         expect(file).toMatch(/^[a-z0-9-]+\.md$/)
       })
-      it('has a summary and at least one topic', () => {
+      it('has a summary (the area and topics are checked against the vocabulary in taxonomy.test.ts)', () => {
         expect(fm.summary).toBeTruthy()
-        expect(fm.topics.length).toBeGreaterThan(0)
       })
       it('uses clean topic slugs without duplicates', () => {
         for (const t of fm.topics) expect(t).toMatch(/^[a-z0-9-]+$/)

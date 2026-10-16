@@ -391,6 +391,7 @@ onBeforeUnmount(() => {
 .node {
   cursor: pointer;
   outline: none;
+  text-decoration: none; /* labels are not links to underline: the shapes are the affordance */
   transition: opacity var(--t-mid) var(--ease-out);
 }
 .node.is-dim {

@@ -2,7 +2,8 @@
 title: Joining JetBrains
 summary: Starting in the Agentic Experience & Tools team, on MCP Steroid and local AI.
 date: 2026-06-17
-topics: [tools, ai-agents]
+area: career
+topics: [internships, llms, developer-tools]
 kind: linkedin
 maturity: evergreen
 embed: https://www.linkedin.com/embed/feed/update/urn:li:activity:7472975142768467968

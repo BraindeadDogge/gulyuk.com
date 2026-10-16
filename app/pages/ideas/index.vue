@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { data: ideas } = await useIdeasIndex()
+const vocab = await useVocabulary()
 
 useSeoMeta({
   title: 'Ideas',
@@ -20,7 +21,7 @@ useSchemaOrg([
       </p>
     </header>
     <ul class="rows">
-      <IdeaRow v-for="idea in ideas" :key="idea.slug" :idea="idea" />
+      <IdeaRow v-for="idea in ideas" :key="idea.slug" :idea="idea" :labels="vocab.labels" />
     </ul>
   </div>
 </template>

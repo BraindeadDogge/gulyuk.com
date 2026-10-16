@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { data: cv } = await useCv()
 if (!cv.value) throw createError({ statusCode: 404, statusMessage: 'CV not found', fatal: true })
+const vocab = await useVocabulary()
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 function month(s?: string) {
@@ -49,8 +50,8 @@ useSchemaOrg([
           <h3>{{ e.role }} <span class="org">· {{ e.org }}</span></h3>
           <p v-if="e.location" class="mono muted where">{{ e.location }}</p>
           <ul><li v-for="b in e.bullets" :key="b">{{ b }}</li></ul>
-          <ul v-if="e.topics.length" class="tags" aria-label="Topics">
-            <li v-for="t in e.topics" :key="t"><NuxtLink :to="`/topics/${t}`" class="mono">{{ t }}</NuxtLink></li>
+          <ul v-if="e.areas.length" class="tags" aria-label="Areas">
+            <li v-for="a in e.areas" :key="a"><NuxtLink :to="`/topics/${a}`" class="mono">{{ vocab.labels[a] ?? a }}</NuxtLink></li>
           </ul>
         </div>
       </article>

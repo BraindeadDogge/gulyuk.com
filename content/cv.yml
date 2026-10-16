@@ -1,6 +1,6 @@
 # Source: LinkedIn (linkedin.com/in/gulyuk), October 2026. The About text was adjusted because the
 # JetBrains internship has ended. Each id becomes an anchor on /cv (/cv#exp-1) and a node in the graph;
-# topics connect an entry to the matching topic hub.
+# areas (ids from taxonomy.yml) connect an entry to the matching area hubs.
 profile:
   name: Grigory Gulyuk
   headline: Software engineer, AI tooling and full-stack products
@@ -33,7 +33,7 @@ experience:
       - Designed and implemented a real-time WebSocket API (FastAPI, Python) with a stop and cancel protocol, integrating the team's multi-step LangGraph pipelines (OpenAI) for hint generation, solution grading and LaTeX-formatted task creation.
       - Owned the whole frontend (Nuxt 4, Vue 3, TypeScript, Tailwind CSS), including a real-time chat UI with optimistic updates and a four-state machine, AI-assisted task generation, a criteria and scoring editor, and a teacher dashboard for classrooms and contests.
       - Worked end to end across the stack, including PostgreSQL schema design, async SQLAlchemy, REST and WebSocket API design, and reactive Vue composables.
-    topics: [full-stack, education]
+    areas: [startups, engineering]
   - id: exp-2
     role: Software Engineer Intern
     org: JetBrains
@@ -47,7 +47,7 @@ experience:
       - Separated devrig installation from AI-agent registration, so no third-party configuration file is changed implicitly and every registration step is explicit and idempotent.
       - Designed a Claude Code marketplace plugin with MCP configuration, lifecycle hooks, setup, status, help and uninstall commands, and Gradle-based package and manifest validation.
       - Prototyped automatic project routing from MCP workspace roots, and hardened MCP and CLI boundaries with input validation and contract tests that keep schemas, documentation and behaviour from drifting apart.
-    topics: [ai-agents, tools]
+    areas: [engineering, ai]
   - id: exp-3
     role: Chief Technology Officer
     org: Unchaind (formerly EXQ)
@@ -58,7 +58,7 @@ experience:
       - Led cross-functional product teams of developers and designers, driving the roadmap and agile workflow through custom task tracking.
       - Built real-time analytics products, including a live spot arbitrage bot and a whale tracker, and optimised data pipelines to process more than 500 million events a day with sub-second latency using Deno and TypeScript.
       - Designed the infrastructure (MongoDB, cloud servers) for 99.9% uptime under high-frequency trading load.
-    topics: [full-stack]
+    areas: [startups, engineering]
   - id: exp-4
     role: Frontend Web Developer
     org: SMS Aero
@@ -67,7 +67,7 @@ experience:
     bullets:
       - Led frontend development for smsaero.ru (Nuxt 2), working with the backend teams on API integrations.
       - Delivered responsive UI and UX improvements.
-    topics: [full-stack]
+    areas: [engineering]
   - id: exp-5
     role: Frontend Developer
     org: GetGo
@@ -75,7 +75,7 @@ experience:
     end: "2022"
     bullets:
       - Built Vue.js and Nuxt applications for enterprise clients, focused on performance and cross-browser compatibility.
-    topics: []
+    areas: []
   - id: exp-6
     role: Freelance Frontend Developer
     org: Freelance
@@ -83,7 +83,7 @@ experience:
     end: "2020"
     bullets:
       - Designed and deployed more than 20 client websites with modern JavaScript frameworks.
-    topics: []
+    areas: []
 
 education:
   - id: edu-1
@@ -102,20 +102,20 @@ skills:
   - id: skills-ai
     group: AI tooling
     items: [Model Context Protocol, Claude Code plugins, LangGraph, OpenAI API, agent contract testing]
-    topics: [ai-agents]
+    areas: [ai]
   - id: skills-tools
     group: Developer tools
     items: [Kotlin, IntelliJ Platform, Gradle, cross-platform installers, test-first development]
-    topics: [tools]
+    areas: [engineering]
   - id: skills-back
     group: Backend
     items: [Python, FastAPI, PostgreSQL, SQLAlchemy, REST, WebSockets, Deno, MongoDB]
-    topics: [full-stack]
+    areas: [engineering]
   - id: skills-front
     group: Frontend
     items: [Nuxt, Vue 3, TypeScript, Tailwind CSS]
-    topics: [full-stack]
+    areas: [engineering]
   - id: skills-lead
     group: Leadership
     items: [Technical leadership, roadmap planning, agile delivery]
-    topics: []
+    areas: [startups]

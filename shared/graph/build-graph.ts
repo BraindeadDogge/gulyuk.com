@@ -8,6 +8,7 @@ export function formatDate(iso: string): string {
   return `${d} ${MONTHS[(m ?? 1) - 1]} ${y}`
 }
 
+/** Fallback label when the vocabulary has none: "ml-fundamentals" becomes "ml fundamentals". */
 export function topicLabel(slug: string): string {
   return slug.replace(/-/g, ' ')
 }
@@ -15,26 +16,32 @@ export function topicLabel(slug: string): string {
 /**
  * Pure: turns content into nodes and edges. Positions are zero here; see layout.ts.
  * Nodes are sorted by id so the output (and therefore the layout) is deterministic.
+ *
+ * The big nodes are the AREAS (a handful, from content/taxonomy.yml). Topics are tags and never
+ * become nodes, so the graph stays readable however many ideas and topics there are. Ideas link to
+ * their area, and to each other only where that says something the areas do not:
+ *  - they share a topic but sit in different areas, or
+ *  - they share two or more topics inside the same area.
  */
-export function buildGraph(ideas: IdeaInput[], cv: CvInput | null): Graph {
+export function buildGraph(ideas: IdeaInput[], cv: CvInput | null, labels: Record<string, string> = {}): Graph {
   const nodes = new Map<string, GraphNode>()
   const edges: GraphEdge[] = []
-  const topicCounts = new Map<string, number>()
+  const areaCounts = new Map<string, number>()
 
   const add = (n: Omit<GraphNode, 'x' | 'y' | 'degree'>) => nodes.set(n.id, { ...n, x: 0, y: 0, degree: 0 })
 
-  for (const idea of ideas) for (const t of idea.topics) topicCounts.set(t, (topicCounts.get(t) ?? 0) + 1)
+  for (const idea of ideas) areaCounts.set(idea.area, (areaCounts.get(idea.area) ?? 0) + 1)
   for (const item of [...(cv?.experience ?? []), ...(cv?.skills ?? [])])
-    for (const t of item.topics) if (!topicCounts.has(t)) topicCounts.set(t, 0)
+    for (const a of item.areas) if (!areaCounts.has(a)) areaCounts.set(a, 0)
 
-  for (const [topic, count] of topicCounts) {
+  for (const [area, count] of areaCounts) {
     add({
-      id: `topic:${topic}`,
+      id: `topic:${area}`,
       kind: 'topic',
-      label: topicLabel(topic),
+      label: labels[area] ?? topicLabel(area),
       caption: `${count} ${count === 1 ? 'idea' : 'ideas'}`,
-      href: `/topics/${topic}`,
-      r: Math.min(22, 13 + count * 2),
+      href: `/topics/${area}`,
+      r: Math.min(26, 14 + count * 1.6),
     })
   }
 
@@ -47,15 +54,15 @@ export function buildGraph(ideas: IdeaInput[], cv: CvInput | null): Graph {
       href: `/ideas/${idea.slug}`,
       r: 6.5,
     })
-    for (const t of idea.topics) edges.push({ source: `idea:${idea.slug}`, target: `topic:${t}`, type: 'topic' })
+    edges.push({ source: `idea:${idea.slug}`, target: `topic:${idea.area}`, type: 'topic' })
   }
 
-  // Ideas that share two or more topics are drawn as related (dashed).
   for (let i = 0; i < ideas.length; i++) {
     for (let j = i + 1; j < ideas.length; j++) {
-      const shared = ideas[i]!.topics.filter(t => ideas[j]!.topics.includes(t))
-      if (shared.length >= 2)
-        edges.push({ source: `idea:${ideas[i]!.slug}`, target: `idea:${ideas[j]!.slug}`, type: 'related' })
+      const a = ideas[i]!, b = ideas[j]!
+      const shared = a.topics.filter(t => b.topics.includes(t)).length
+      if ((a.area !== b.area && shared >= 1) || (a.area === b.area && shared >= 2))
+        edges.push({ source: `idea:${a.slug}`, target: `idea:${b.slug}`, type: 'related' })
     }
   }
 
@@ -64,12 +71,12 @@ export function buildGraph(ideas: IdeaInput[], cv: CvInput | null): Graph {
     for (const e of cv.experience) {
       add({ id: `cv:${e.id}`, kind: 'cv', label: `${e.role}, ${e.org}`, caption: 'experience', href: `/cv#${e.id}`, r: 4.5 })
       edges.push({ source: `cv:${e.id}`, target: 'cv:root', type: 'cv' })
-      for (const t of e.topics) edges.push({ source: `cv:${e.id}`, target: `topic:${t}`, type: 'cv-topic' })
+      for (const a of e.areas) edges.push({ source: `cv:${e.id}`, target: `topic:${a}`, type: 'cv-topic' })
     }
     for (const s of cv.skills) {
       add({ id: `cv:${s.id}`, kind: 'cv', label: s.group, caption: 'skills', href: `/cv#${s.id}`, r: 4.5 })
       edges.push({ source: `cv:${s.id}`, target: 'cv:root', type: 'cv' })
-      for (const t of s.topics) edges.push({ source: `cv:${s.id}`, target: `topic:${t}`, type: 'cv-topic' })
+      for (const a of s.areas) edges.push({ source: `cv:${s.id}`, target: `topic:${a}`, type: 'cv-topic' })
     }
   }
 

@@ -2,7 +2,8 @@
 title: Leaving JetBrains
 summary: My internship on MCP Steroid has ended. What I learned at JetBrains, who I learned it from, and what comes next.
 date: 2026-10-12
-topics: [tools, ai-agents]
+area: career
+topics: [internships, developer-tools]
 kind: linkedin
 maturity: evergreen
 embed: https://www.linkedin.com/embed/feed/update/urn:li:activity:7515450353639792640

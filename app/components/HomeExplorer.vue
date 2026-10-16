@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { LaidOutGraph } from '~~/shared/graph/types'
-import type { TopicGroup } from '~/composables/useSiteData'
+import type { AreaGroup } from '~/composables/useSiteData'
 
 defineProps<{
   graph: LaidOutGraph
-  groups: TopicGroup[]
+  groups: AreaGroup[]
+  labels: Record<string, string>
   newest: string[]
-  count: { ideas: number; topics: number }
+  count: { ideas: number; areas: number }
 }>()
 
 type View = 'graph' | 'list'
@@ -134,7 +135,7 @@ onBeforeUnmount(() => {
     </section>
 
     <div id="list-panel" class="list-panel" @focusin="onFocusIn" @focusout="onFocusOut">
-      <ClassicNav :groups="groups" />
+      <ClassicNav :groups="groups" :labels="labels" />
     </div>
 
     <footer class="stage-footer">
@@ -142,11 +143,11 @@ onBeforeUnmount(() => {
         <div class="graph-only">
           <p class="blurb">Notes, experiments and a CV. Every shape is a page.</p>
           <p class="mono muted legend">
-            <span class="key"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" class="k-hub" /></svg>topic</span>
+            <span class="key"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" class="k-hub" /></svg>area</span>
             <span class="key"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="4.5" class="k-idea" /></svg>idea</span>
             <span class="key"><svg viewBox="0 0 14 14" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" class="k-cv" /></svg>cv</span>
             <span class="key"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="3" class="k-new" /></svg>newest</span>
-            <span class="count">{{ count.ideas }} ideas · {{ count.topics }} topics</span>
+            <span class="count">{{ count.ideas }} ideas · {{ count.areas }} areas</span>
           </p>
           <p class="mono muted hint">Hover to trace connections. Drag to rearrange. Keyboard and screen readers: the list of every page opens as you tab.</p>
         </div>

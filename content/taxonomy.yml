@@ -1,0 +1,175 @@
+# The vocabulary for ideas. Every idea has exactly ONE area and up to THREE topics, all taken from here.
+#
+# Areas are few and fixed: they are the big hubs of the home graph, and the sections of the plain list.
+# Topics are the many small tags under them: they never become graph nodes, they show up as tags and get
+# their own page. A topic may be used by an idea from any area, but it is listed under the area where a
+# reader would look for it first.
+#
+# Adding something? Read NEW-IDEA-CHECKLIST.md first. Ids are lowercase-with-hyphens and must be unique
+# across areas AND topics. After editing, run `pnpm taxonomy` to refresh the checklist (tests fail if you forget).
+
+areas:
+  - id: ai
+    label: AI & ML
+    about: How learning systems work. Explainers, experiments, papers and the maths underneath.
+    topics:
+      - id: ml-fundamentals
+        label: ML fundamentals
+        about: Loss, training, approximation and generalisation.
+      - id: deep-learning
+        label: Deep learning
+        about: Networks, architectures and training tricks.
+      - id: llms
+        label: LLMs & agents
+        about: Language models, agents, MCP and prompting.
+      - id: evaluation
+        label: Evaluation
+        about: Metrics, benchmarks and how not to fool yourself.
+      - id: data
+        label: Data
+        about: Datasets, labelling, cleaning and synthetic data.
+      - id: math
+        label: Maths
+        about: The mathematics behind the models.
+      - id: explainers
+        label: Interactive explainers
+        about: Things you can play with to understand an idea.
+      - id: papers
+        label: Papers & reading notes
+        about: Notes on research papers and talks.
+      - id: ai-ethics
+        label: Responsible AI
+        about: Safety, ethics and using AI well.
+
+  - id: engineering
+    label: Engineering
+    about: Building software. Tools, web, backend and the craft around them.
+    topics:
+      - id: web
+        label: Web & frontend
+        about: Nuxt, Vue, CSS and the browser.
+      - id: backend
+        label: Backend & APIs
+        about: Servers, databases and real-time systems.
+      - id: developer-tools
+        label: Developer tools
+        about: IDEs, command-line tools, plugins and workflows.
+      - id: infrastructure
+        label: Infrastructure
+        about: Hosting, deploys, DNS and CI.
+      - id: testing
+        label: Testing & quality
+        about: Tests, reviews and reliability.
+      - id: architecture
+        label: Architecture
+        about: Design decisions and their trade-offs.
+      - id: design-engineering
+        label: Design engineering
+        about: Interaction, motion, accessibility and craft.
+      - id: open-source
+        label: Open source
+        about: Contributing, maintaining and licences.
+
+  - id: startups
+    label: Startups
+    about: Building companies and products, including Soqra.
+    topics:
+      - id: soqra
+        label: Soqra
+        about: The AI maths-learning platform I build.
+      - id: product
+        label: Product
+        about: Deciding what to build, and shipping it.
+      - id: edtech
+        label: EdTech
+        about: Technology for teaching and learning.
+      - id: user-research
+        label: User research
+        about: Pilots, interviews and feedback.
+      - id: leadership
+        label: Leadership
+        about: Running a team and setting technical direction.
+      - id: lessons
+        label: Lessons learned
+        about: What worked and what did not.
+
+  - id: education
+    label: Education
+    about: Teaching, studying and how people learn.
+    topics:
+      - id: teaching
+        label: Teaching & mentoring
+        about: Explaining things to other people.
+      - id: university
+        label: University life
+        about: Studying computer science and AI.
+      - id: courses
+        label: Courses & lecture notes
+        about: Notes from courses and lectures.
+      - id: learning-methods
+        label: Learning methods
+        about: How to learn something well.
+      - id: schools
+        label: Schools & students
+        about: Working with schools and young learners.
+      - id: edu-projects
+        label: Educational projects
+        about: Things built to teach or to learn.
+
+  - id: career
+    label: Career
+    about: Work, internships and growing as an engineer.
+    topics:
+      - id: internships
+        label: Internships
+        about: Joining, doing and leaving internships.
+      - id: job-search
+        label: Job search
+        about: Applications, interviews and offers.
+      - id: growth
+        label: Growing as an engineer
+        about: Skills, habits and feedback.
+      - id: hiring
+        label: Hiring
+        about: Building teams and picking people.
+      - id: remote-work
+        label: Remote work
+        about: Working across places and time zones.
+      - id: freelance
+        label: Freelance
+        about: Working for yourself, and for clients.
+
+  - id: life
+    label: Life
+    about: Everyday life, places and personal notes.
+    topics:
+      - id: cyprus
+        label: Living in Cyprus
+        about: Daily life on the island.
+      - id: relocation
+        label: Moving & paperwork
+        about: Visas, permits, registration and bureaucracy.
+      - id: travel
+        label: Travel
+        about: Trips, places and practical tips.
+      - id: food
+        label: Food
+        about: Eating, cooking and finding good places.
+      - id: language-culture
+        label: Language & culture
+        about: Languages, customs and getting along.
+      - id: habits
+        label: Habits & productivity
+        about: Routines and ways of working.
+      - id: books
+        label: Books & reading
+        about: What I read and what I took from it.
+      - id: health
+        label: Health & fitness
+        about: Sport, sleep and looking after yourself.
+      - id: photography
+        label: Photography
+        about: Photos and how they were made.
+      - id: reflections
+        label: Reflections
+        about: Looking back, and thinking out loud.

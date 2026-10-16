@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   const site = 'https://gulyuk.com'
   const ideas = await queryCollection(event, 'ideas')
     .where('draft', '=', false)
-    .select('path', 'title', 'summary', 'date', 'topics')
+    .select('path', 'title', 'summary', 'date', 'area', 'topics')
     .order('date', 'DESC')
     .all()
 
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
         `<guid isPermaLink="true">${url}</guid>`,
         `<pubDate>${date}</pubDate>`,
         `<description>${esc(i.summary)}</description>`,
-        ...i.topics.map(t => `<category>${esc(t)}</category>`),
+        ...[i.area, ...i.topics].map(t => `<category>${esc(t)}</category>`),
         '</item>',
       ].join('')
     })

@@ -2,7 +2,8 @@
 title: Taking Soqra to a classroom
 summary: A school visit with 10th graders, and what 93% of them said about learning maths with AI.
 date: 2026-05-11
-topics: [education, full-stack]
+area: startups
+topics: [soqra, edtech, schools]
 kind: linkedin
 maturity: evergreen
 embed: https://www.linkedin.com/embed/feed/update/urn:li:activity:7459684468187021312
