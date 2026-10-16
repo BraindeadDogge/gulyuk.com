@@ -9,6 +9,7 @@ import { extname, join, normalize } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from '@playwright/test'
 
+const SITE = 'https://gulyuk.com'
 const root = fileURLToPath(new URL('../.output/public', import.meta.url))
 const out = fileURLToPath(new URL('../public/pdf/Grigory-Gulyuk-CV.pdf', import.meta.url))
 if (!existsSync(root)) throw new Error('Run `pnpm generate` first: .output/public does not exist.')
@@ -36,6 +37,14 @@ try {
   await page.emulateMedia({ media: 'print', colorScheme: 'light' })
   await page.goto(`http://127.0.0.1:${port}/cv`, { waitUntil: 'networkidle' })
   await page.evaluate(() => document.fonts.ready)
+  // The page is printed from a local copy, and Chrome writes each link's resolved address into the PDF. Point every
+  // link that stays on the site at the live address instead, so none of them says http://127.0.0.1:<port>.
+  await page.evaluate((site) => {
+    for (const a of document.querySelectorAll('a[href]')) {
+      const url = new URL(a.href)
+      if (url.origin === location.origin) a.href = site + url.pathname + url.search + url.hash
+    }
+  }, SITE)
   const pdf = await page.pdf({ format: 'A4', printBackground: true, margin: { top: '16mm', bottom: '16mm', left: '16mm', right: '16mm' }, preferCSSPageSize: false })
   await mkdir(join(out, '..'), { recursive: true })
   await writeFile(out, pdf)
