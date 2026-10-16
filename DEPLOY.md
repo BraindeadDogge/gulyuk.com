@@ -1,32 +1,27 @@
-# Deploying gulyuk.com: Railway, Cloudflare and the domain
+# Deploying gulyuk.com
 
-Goal: `https://gulyuk.com` is the one real address. `www.gulyuk.com`, `http://gulyuk.com` and
+How the site gets from this repository to `https://gulyuk.com`: Railway builds and runs it, and Cloudflare handles DNS,
+HTTPS and the `www` redirect. Follow it with your own accounts and domain.
+
+The goal: `https://gulyuk.com` is the one real address. `www.gulyuk.com`, `http://gulyuk.com` and
 `http://www.gulyuk.com` all end up there with a single permanent redirect, and everything is served over HTTPS.
 
-The site is a static build served by Caddy in a container (see `Dockerfile` and `Caddyfile`). Railway builds it
-from this repository on every push to `main`. It needs no environment variables and no database.
+The site is a static build served by Caddy in a container (see the `Dockerfile` and `Caddyfile`). Railway builds it from
+this repository on every push to `main`. It needs no environment variables; visit statistics are optional and
+described in [docs/analytics.md](docs/analytics.md).
 
-## Your actual values (checked 16 Oct 2026)
+## What you need
 
-- Railway project `gulyuk-com`, service `gulyuk-com`, temporary address
-  `https://gulyuk-com-production.up.railway.app`.
-- Railway custom domain `gulyuk.com` is already added. The DNS record it asks for is
-  **`CNAME  @  wxrkhi9q.up.railway.app`**. If Railway ever shows a different value, trust Railway.
-- Domain registrar: **Namecheap**. DNS is currently Namecheap's own (`dns1/dns2.registrar-servers.com`) and the
-  domain shows a parking page: `A @ 192.64.119.191` and `www` pointing at `parkingpage.namecheap.com`.
-  Both go away in step 2.
-- Namecheap **email forwarding** is on. It depends on Namecheap's DNS, so when nameservers move to Cloudflare
-  these records must be recreated in Cloudflare (step 2, item 5) or forwarded mail stops arriving.
+- a Railway account with this repository connected;
+- a Cloudflare account (the Free plan is enough);
+- a domain. The steps use Namecheap as the example registrar; any registrar works the same way.
 
-**Status (16 Oct 2026): done.** The Cloudflare zone is active, the records and the settings below are in
-place, the Railway certificate is issued, and the apex record is proxied. `http`, `https`, `www` and
-`http://www` all end at `https://gulyuk.com`. Cloudflare settings applied: SSL mode Full (strict), Always Use
-HTTPS, Automatic HTTPS Rewrites, minimum TLS 1.2, and a 301 redirect rule for `www.gulyuk.com`.
+Anything written as `<like-this>` is specific to your accounts: the Railway and Cloudflare dashboards show the real value.
 
 ## 1. Railway service
 
-1. In the Railway dashboard create a project and choose **Deploy from GitHub repo**, then pick
-   `BraindeadDogge/gulyuk.com` (Railway asks to install its GitHub app the first time).
+1. In the Railway dashboard create a project and choose **Deploy from GitHub repo**, then pick this repository
+   (Railway asks to install its GitHub app the first time).
 2. Railway finds the `Dockerfile` and builds it. The first build takes a few minutes.
 3. In the service, open **Settings > Networking**. If asked for a port, use the one Railway detects. The container
    listens on `$PORT`, which Railway sets itself.
@@ -36,15 +31,14 @@ HTTPS, Automatic HTTPS Rewrites, minimum TLS 1.2, and a 301 redirect rule for `w
 ## 2. Put the domain on Cloudflare
 
 1. Add `gulyuk.com` to Cloudflare (**Add a domain**, Free plan is enough).
-2. Cloudflare assigned this zone the nameservers **`audrey.ns.cloudflare.com`** and
-   **`conrad.ns.cloudflare.com`** (use whatever the Cloudflare dashboard shows if they ever differ). At
-   **Namecheap**: **Domain List > Manage > Nameservers**, choose **Custom DNS**, enter those two, and save
+2. Cloudflare assigns your zone two nameservers (they look like **`<name>.ns.cloudflare.com`**; the dashboard shows
+   yours). At **Namecheap**: **Domain List > Manage > Nameservers**, choose **Custom DNS**, enter those two, and save
    with the green tick. This can take from minutes to a day. Cloudflare emails you when the domain is active.
 3. Cloudflare scans the old DNS and offers to import the records it finds. Accept the import, then review the list.
-4. **Delete** the Namecheap parking records for `@` and `www`: `A @ 192.64.119.191` and
-   `CNAME www parkingpage.namecheap.com` (they would fight with Railway).
-5. **Keep email forwarding working.** Make sure these records exist in Cloudflare (all set to **DNS only**,
-   email records can never be proxied):
+4. **Delete** the registrar's parking records for `@` and `www` if there are any (for Namecheap: `A @ 192.64.119.191`
+   and `CNAME www parkingpage.namecheap.com`); they would fight with Railway.
+5. **Keep email forwarding working** (only if you use Namecheap's forwarding). Make sure these records exist in
+   Cloudflare, all set to **DNS only** (email records can never be proxied):
 
    | Type | Name | Content | Priority |
    |------|------|---------|----------|
@@ -55,24 +49,24 @@ HTTPS, Automatic HTTPS Rewrites, minimum TLS 1.2, and a 301 redirect rule for `w
    | MX  | `@` | `eforward5.registrar-servers.com` | 20 |
    | TXT | `@` | `v=spf1 include:spf.efwd.registrar-servers.com ~all` | n/a |
 
-   These are the values Namecheap's forwarding uses today. In Namecheap, **Domain List > Manage > Email
-   Forwarding** lists the same records if you want to compare. Send yourself a test mail after the switch.
+   These are the values Namecheap's forwarding uses. In Namecheap, **Domain List > Manage > Email Forwarding** lists
+   the same records if you want to compare. Send yourself a test mail after the switch.
 
 ## 3. Connect the domain to Railway
 
 1. In Railway, **Settings > Networking > Custom Domain**, add `gulyuk.com` (the bare domain, nothing else).
-2. Railway shows a **CNAME target** (currently `wxrkhi9q.up.railway.app`) and, in some cases, a **TXT
-   verification record**. Treat what the Railway dashboard shows as the source of truth.
+2. Railway shows a **CNAME target** (like `<target>.up.railway.app`) and, in some cases, a **TXT verification
+   record**. Treat what the Railway dashboard shows as the source of truth.
 3. In Cloudflare **DNS > Records** add:
 
    | Type  | Name | Content                    | Proxy status |
    |-------|------|----------------------------|--------------|
-   | CNAME | `@`  | `wxrkhi9q.up.railway.app`  | **DNS only** (grey cloud) |
+   | CNAME | `@`  | `<target>.up.railway.app`  | **DNS only** (grey cloud) |
    | TXT   | `_railway-verify` | `railway-verify=...` (the exact value is in the Railway dashboard under Networking) | n/a |
 
    **The TXT record is required.** Railway's CLI prints only the CNAME, but without the TXT record the domain
-   stays at "validating ownership" and Railway never issues a certificate. Verification took about 10 minutes
-   after the record was added.
+   stays at "validating ownership" and Railway never issues a certificate. Verification usually takes about 10
+   minutes after the record is added.
 
    Cloudflare allows a CNAME on the bare domain; it flattens it automatically.
 4. Wait until Railway shows the domain as verified and the certificate as issued (a few minutes). The grey cloud
@@ -129,6 +123,7 @@ Also open `https://gulyuk.com`, `/cv`, an idea page and `/rss.xml` in a browser.
 
 ## 7. After the first deploy
 
+- Want visit statistics? They are optional and off until you set them up: see [docs/analytics.md](docs/analytics.md).
 - Every push to `main` redeploys automatically. Hashed build files are cached for a year, and HTML is always
   revalidated, so a new deploy shows up immediately without purging the Cloudflare cache.
 - Submit `https://gulyuk.com/sitemap.xml` in Google Search Console and Bing Webmaster Tools.
@@ -143,43 +138,3 @@ Also open `https://gulyuk.com`, `/cv`, an idea page and `/rss.xml` in a browser.
 | Railway says the certificate is pending for a long time | the `@` record is proxied too early, or the TXT record is missing; set it to DNS only and re-check |
 | `www` shows a Cloudflare error instead of redirecting | the `www` record is missing or grey-clouded; it must be proxied for the rule to run |
 | Old site still appears | old `A` or `AAAA` records for `@` are still there, or nameservers have not changed yet |
-
-## Visit statistics (Umami)
-
-The site counts visits with Umami, which you host yourself on Railway next to the site. Nothing is counted until
-the three variables in step 5 are set. These are things you do in your own accounts; nothing here signs in for you.
-
-1. **Run Umami on Railway.** In the `gulyuk-com` project: New, Template, search "Umami", deploy. It creates the app
-   and a Postgres database. In the Umami service set `APP_SECRET` to a random string of at least 32 characters and
-   `DISABLE_TELEMETRY=1`.
-2. **Give it a subdomain.** In the Umami service: Settings, Networking, Custom Domain, `stats.gulyuk.com`. Railway
-   shows a CNAME target. Add that CNAME for `stats` in Cloudflare (the `cf` CLI or the dashboard). Wait for the
-   certificate.
-3. **Secure the dashboard.** Open `https://stats.gulyuk.com`, sign in with Umami's default account (`admin`,
-   password `umami`) and change the password at once to a long, unique one. The dashboard stays private.
-4. **Add the site.** Settings, Websites, Add website: name `gulyuk.com`, domain `gulyuk.com`. Copy its Website ID.
-5. **Tell the site.** In the `gulyuk-com` site service on Railway add the variables
-   `NUXT_PUBLIC_UMAMI_HOST=https://stats.gulyuk.com`, `NUXT_PUBLIC_UMAMI_ID=<the Website ID>` and
-   `NUXT_PUBLIC_UMAMI_DOMAINS=gulyuk.com`, then redeploy. They are build arguments (see the `Dockerfile`), so the
-   new build bakes them into the pages.
-6. **Retention (13 months).** The privacy page promises it. Check whether the running Umami version offers a
-   data-retention setting (website settings or admin settings); if it does, set it to 13 months. If it does not,
-   run this against the Umami database every month (Railway Postgres, Data tab; confirm the table names with `\dt`
-   first):
-
-   ```sql
-   DELETE FROM event_data    WHERE created_at < NOW() - INTERVAL '13 months';
-   DELETE FROM website_event WHERE created_at < NOW() - INTERVAL '13 months';
-   DELETE FROM session       WHERE created_at < NOW() - INTERVAL '13 months';
-   ```
-
-   Put a monthly reminder in your calendar.
-7. **Reading the reports.** Pages and referrers: the website's Overview. Reading depth: Events, click `read-50` (or
-   `read-100`), then the `idea` property breakdown. Essay drop-off: `essay-chapter` by `chapter`. CV: Overview, page
-   `/cv`, plus `cv-download`, `profile-click` by `site` and `outbound` by `host`. Shared-link results: `landing` by
-   `ref`.
-8. **Tagged links.** Add `?ref=short-label` (lower-case letters, digits, hyphens) to any link you send. The label is
-   recorded once and disappears from the address bar.
-
-Local testing: `pnpm generate:test` builds the site with a stub collector address; `pnpm test:e2e` needs that build
-(the Playwright config starts the stub on port 4174 itself).
