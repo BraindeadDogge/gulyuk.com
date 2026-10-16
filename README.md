@@ -90,6 +90,14 @@ pull, slow drift, a pulse) and pauses when the tab is hidden, the graph is off-s
 "pause motion". The plain list is always in the page too: it is the accessible version, the mobile default,
 and what crawlers read.
 
+## Logo and icons
+
+The mark, lockups and usage rules are in `brand/`. The browser and phone icons, the web manifest and the 1200x630
+link-preview image are in `public/` and declared in `nuxt.config.ts` (`app.head`) and `app/app.vue` (theme colour and
+share image). `tests/e2e/icons.spec.ts` checks every page declares them, that each file exists with the right size,
+and that nothing from the Nuxt starter (favicon, credit comments) is served. If you change the mark, regenerate all of
+the PNG and ICO files so they stay in step; the test checks their pixel sizes, not their look.
+
 ## Visit statistics
 
 Visits are counted with a self-hosted Umami (setup in `DEPLOY.md`), without cookies. Tracking is off when the
