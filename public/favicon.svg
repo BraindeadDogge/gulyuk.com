@@ -1,10 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <style>
-    .ink { fill: #1b1a17; stroke: #1b1a17; }
-    .acc { fill: #c2301a; }
-    @media (prefers-color-scheme: dark) { .ink { fill: #ece8df; stroke: #ece8df; } .acc { fill: #ff6b4a; } }
-  </style>
-  <circle class="ink" cx="11" cy="17" r="7" />
-  <circle cx="23" cy="9" r="3.5" fill="none" stroke-width="2" class="ink" style="fill:none" />
-  <rect class="acc" x="19" y="21" width="7" height="7" />
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="15.7 15.7 224.6 224.6"><title>gulyuk.com</title><style>.i{fill:#1B1A17}.a{fill:#C2301A}@media(prefers-color-scheme:dark){.i{fill:#ECE8DF}.a{fill:#FF6B4A}}</style><path class="i" d="M44 212.3L104.8 212.3A20 20 0 0 0 120.2 205.1L227.4 76.5A20 20 0 0 0 196.6 50.9L95.4 172.3L44 172.3A20 20 0 0 0 44 212.3Z"/><circle class="a" cx="76.2" cy="120.3" r="34"/></svg>
