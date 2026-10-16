@@ -5,7 +5,7 @@ test.describe('home', () => {
   test('server-rendered HTML contains real links to every idea (crawlers, no JS)', async ({ request }) => {
     const html = await (await request.get('/')).text()
     const links = html.match(/href="\/ideas\/[a-z0-9-]+"/g) ?? []
-    expect(new Set(links).size).toBeGreaterThanOrEqual(5)
+    expect(new Set(links).size).toBeGreaterThanOrEqual(4)
     expect(html).toContain('href="/topics/ml"')
     expect(html).toContain('href="/cv"')
   })
@@ -14,7 +14,7 @@ test.describe('home', () => {
     await page.goto('/')
     const graph = page.locator('svg.graph')
     await expect(graph).toBeVisible()
-    await expect(graph.locator('a.node')).toHaveCount(16)
+    expect(await graph.locator('a.node').count()).toBeGreaterThan(10)
 
     await page.getByRole('button', { name: 'make everything boring' }).click()
     await expect(page.locator('nav[aria-label="Contents"]')).toBeVisible()
@@ -46,8 +46,8 @@ test.describe('home', () => {
   test('graph nodes are not tab stops; the list is the keyboard path', async ({ page }) => {
     await page.goto('/')
     await expect(page.locator('svg.graph')).toHaveAttribute('aria-hidden', 'true')
-    const focusable = await page.locator('svg.graph a[tabindex="-1"]').count()
-    expect(focusable).toBe(16)
+    const nodes = await page.locator('svg.graph a.node').count()
+    expect(await page.locator('svg.graph a[tabindex="-1"]').count()).toBe(nodes)
   })
 
   test('pause motion keeps its name and reports state with aria-pressed', async ({ page }) => {
@@ -76,7 +76,7 @@ test.describe('pages', () => {
     await expect(page.locator('math').first()).toBeAttached()
     await expect(page.getByRole('img', { name: /Function approximation plot/ })).toBeVisible()
 
-    await page.goto('/ideas/linkedin-sample-post')
+    await page.goto('/ideas/leaving-jetbrains')
     await expect(page.locator('iframe')).toHaveCount(0)
     await page.getByRole('button', { name: /Load LinkedIn post/ }).click()
     await expect(page.locator('iframe[title^="LinkedIn post"]')).toHaveAttribute('referrerpolicy', 'no-referrer')
@@ -100,9 +100,9 @@ test.describe('pages', () => {
   })
 
   test('topic page lists its ideas', async ({ page }) => {
-    await page.goto('/topics/ml')
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('ml')
-    expect(await page.locator('ul.rows > li').count()).toBeGreaterThanOrEqual(3)
+    await page.goto('/topics/tools')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('tools')
+    expect(await page.locator('ul.rows > li').count()).toBeGreaterThanOrEqual(2)
   })
 
   test('unknown routes show the 404 page with a way home', async ({ page }) => {
@@ -131,8 +131,10 @@ test.describe('accessibility (axe)', () => {
   for (const path of ['/', '/ideas', '/ideas/function-approximation', '/cv', '/topics/ml']) {
     for (const scheme of ['light', 'dark'] as const) {
       test(`${path} (${scheme}) has no serious violations`, async ({ page }) => {
-        await page.emulateMedia({ colorScheme: scheme })
+        // The site is light by default; its own theme switch stores the choice under this key.
+        await page.addInitScript((value) => localStorage.setItem('gulyuk-theme', value), scheme)
         await page.goto(path)
+        await expect(page.locator('html')).toHaveClass(new RegExp(scheme))
         await page.waitForTimeout(400)
         const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag22aa']).analyze()
         const serious = results.violations.filter(v => v.impact === 'serious' || v.impact === 'critical')

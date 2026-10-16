@@ -1,67 +1,121 @@
-# PLACEHOLDER DATA. LinkedIn is behind a login, so this is filler in the right shape.
-# Replace every entry with the real CV; ids become anchors (/cv#exp-1) and graph nodes.
+# Source: LinkedIn (linkedin.com/in/gulyuk), October 2026. The About text was adjusted because the
+# JetBrains internship has ended. Each id becomes an anchor on /cv (/cv#exp-1) and a node in the graph;
+# topics connect an entry to the matching topic hub.
 profile:
   name: Grigory Gulyuk
-  headline: Machine learning engineer and researcher
-  location: Placeholder City
+  headline: Software engineer, AI tooling and full-stack products
+  location: Paphos, Cyprus
   summary: >-
-    Placeholder summary. I build and study machine learning systems, mostly the unglamorous parts:
-    evaluation, data, and the small experiments that decide whether an idea is worth a month.
-  email: hello@gulyuk.com
+    Software engineer working on AI tooling and full-stack products. Until October 2026 I was a software
+    engineer intern at JetBrains, on MCP Steroid, an official JetBrains incubator project that connects AI
+    coding agents such as Claude Code, Codex and Gemini to JetBrains IDEs through the Model Context Protocol.
+    My work there spanned the IntelliJ Platform plugin, the Kotlin-based devrig CLI and MCP server,
+    cross-platform installation flows and automated testing.
+    Alongside it I work as the full-stack engineer at Soqra, an AI-powered platform for mathematics education:
+    a real-time backend with FastAPI, Python and PostgreSQL, and a frontend with Nuxt 4, Vue 3 and TypeScript.
+    I study Computer Science and Artificial Intelligence at Neapolis University Pafos, in a program designed
+    and delivered by JetBrains. I like working close to the product, where backend architecture, developer
+    tooling, AI systems and user experience come together, and I am looking for my next internship.
   links:
     - label: LinkedIn
       url: https://www.linkedin.com/in/gulyuk
     - label: GitHub
-      url: https://github.com/gulyuk
+      url: https://github.com/BraindeadDogge
 
 experience:
   - id: exp-1
-    role: Senior Machine Learning Engineer
-    org: Company A (placeholder)
-    location: Remote
-    start: "2023-02"
+    role: Full Stack Engineer
+    org: Soqra
+    location: Pafos, Cyprus
+    start: "2026-02"
     bullets:
-      - Placeholder. Led the evaluation harness for a ranking model used by several product teams.
-      - Placeholder. Cut offline experiment turnaround from days to hours with a cached feature pipeline.
-      - Placeholder. Wrote the internal guide on reading learning curves honestly.
-    topics: [ml, tools]
+      - Built Soqra, a full-stack AI-powered platform connecting students and teachers for maths problem solving.
+      - Designed and implemented a real-time WebSocket API (FastAPI, Python) with a stop and cancel protocol, integrating the team's multi-step LangGraph pipelines (OpenAI) for hint generation, solution grading and LaTeX-formatted task creation.
+      - Owned the whole frontend (Nuxt 4, Vue 3, TypeScript, Tailwind CSS), including a real-time chat UI with optimistic updates and a four-state machine, AI-assisted task generation, a criteria and scoring editor, and a teacher dashboard for classrooms and contests.
+      - Worked end to end across the stack, including PostgreSQL schema design, async SQLAlchemy, REST and WebSocket API design, and reactive Vue composables.
+    topics: [full-stack, education]
   - id: exp-2
-    role: Machine Learning Engineer
-    org: Company B (placeholder)
-    location: Placeholder City
-    start: "2020-06"
-    end: "2023-01"
+    role: Software Engineer Intern
+    org: JetBrains
+    location: Paphos, Cyprus
+    start: "2026-06"
+    end: "2026-10"
     bullets:
-      - Placeholder. Shipped a function-approximation service for sensor calibration.
-      - Placeholder. Replaced a hand-tuned heuristic with a small model that was easier to test.
-    topics: [ml, math]
+      - Worked on MCP Steroid in the Agentic Experience & Tools team, an official JetBrains incubator project that connects AI coding agents to JetBrains IDEs through the Model Context Protocol.
+      - Shipped an IDE-side onboarding and configuration experience for devrig, with installation from the IDE settings, actionable notifications and setup paths for Claude Code, Codex, Gemini and other MCP clients.
+      - Built shared cross-platform installation infrastructure in Kotlin for macOS, Linux and Windows, covering OS-specific launchers, path quoting, PowerShell fallbacks, cancellable background execution and coordination between concurrent installer processes.
+      - Separated devrig installation from AI-agent registration, so no third-party configuration file is changed implicitly and every registration step is explicit and idempotent.
+      - Designed a Claude Code marketplace plugin with MCP configuration, lifecycle hooks, setup, status, help and uninstall commands, and Gradle-based package and manifest validation.
+      - Prototyped automatic project routing from MCP workspace roots, and hardened MCP and CLI boundaries with input validation and contract tests that keep schemas, documentation and behaviour from drifting apart.
+    topics: [ai-agents, tools]
   - id: exp-3
-    role: Research Assistant
-    org: University Lab (placeholder)
-    start: "2018-09"
-    end: "2020-05"
+    role: Chief Technology Officer
+    org: Unchaind (formerly EXQ)
+    start: "2024-03"
+    end: "2025-07"
     bullets:
-      - Placeholder. Studied approximation error of small neural networks on smooth targets.
-    topics: [math, visualization]
+      - Grew a crypto analytics startup from inception to a team of 15, delivering trading tools.
+      - Led cross-functional product teams of developers and designers, driving the roadmap and agile workflow through custom task tracking.
+      - Built real-time analytics products, including a live spot arbitrage bot and a whale tracker, and optimised data pipelines to process more than 500 million events a day with sub-second latency using Deno and TypeScript.
+      - Designed the infrastructure (MongoDB, cloud servers) for 99.9% uptime under high-frequency trading load.
+    topics: [full-stack]
+  - id: exp-4
+    role: Frontend Web Developer
+    org: SMS Aero
+    start: "2022-04"
+    end: "2024-04"
+    bullets:
+      - Led frontend development for smsaero.ru (Nuxt 2), working with the backend teams on API integrations.
+      - Delivered responsive UI and UX improvements.
+    topics: [full-stack]
+  - id: exp-5
+    role: Frontend Developer
+    org: GetGo
+    start: "2020"
+    end: "2022"
+    bullets:
+      - Built Vue.js and Nuxt applications for enterprise clients, focused on performance and cross-browser compatibility.
+    topics: []
+  - id: exp-6
+    role: Freelance Frontend Developer
+    org: Freelance
+    start: "2017"
+    end: "2020"
+    bullets:
+      - Designed and deployed more than 20 client websites with modern JavaScript frameworks.
+    topics: []
 
 education:
   - id: edu-1
-    degree: MSc, Applied Mathematics (placeholder)
-    school: Placeholder University
-    start: "2016"
-    end: "2018"
-    note: Thesis on approximation theory.
+    degree: BSc, Computer Science and Artificial Intelligence
+    school: Neapolis University Pafos
+    start: "2025-10"
+    end: "2029-06"
+    note: A program designed and delivered by JetBrains.
+  - id: edu-2
+    degree: Specialist degree (unfinished), Computer and Information Systems Security
+    school: Higher School of Economics
+    start: "2021-09"
+    end: "2023-05"
 
 skills:
-  - id: skills-ml
-    group: Machine learning
-    items: [PyTorch, JAX, scikit-learn, evaluation design, experiment tracking]
-    topics: [ml]
-  - id: skills-eng
-    group: Engineering
-    items: [Python, TypeScript, Vue, Nuxt, SQL, Docker]
+  - id: skills-ai
+    group: AI tooling
+    items: [Model Context Protocol, Claude Code plugins, LangGraph, OpenAI API, agent contract testing]
+    topics: [ai-agents]
+  - id: skills-tools
+    group: Developer tools
+    items: [Kotlin, IntelliJ Platform, Gradle, cross-platform installers, test-first development]
     topics: [tools]
-  - id: skills-viz
-    group: Visualization
-    items: [D3, SVG, Canvas, interactive explanations]
-    topics: [visualization]
+  - id: skills-back
+    group: Backend
+    items: [Python, FastAPI, PostgreSQL, SQLAlchemy, REST, WebSockets, Deno, MongoDB]
+    topics: [full-stack]
+  - id: skills-front
+    group: Frontend
+    items: [Nuxt, Vue 3, TypeScript, Tailwind CSS]
+    topics: [full-stack]
+  - id: skills-lead
+    group: Leadership
+    items: [Technical leadership, roadmap planning, agile delivery]
+    topics: []

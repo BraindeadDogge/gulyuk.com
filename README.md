@@ -61,9 +61,8 @@ Nothing from LinkedIn loads until the visitor presses the button.
 
 ## Edit the CV
 
-Everything is in `content/cv.yml`. **The current entries are placeholders** (LinkedIn needs a login, so the
-original could not be copied). Each `id` becomes an anchor on `/cv` and a node in the graph. Topics in an entry
-connect it to the matching hub.
+Everything is in `content/cv.yml`, taken from LinkedIn. Each `id` becomes an anchor on `/cv` and a node in
+the graph. Topics in an entry connect it to the matching hub.
 
 To refresh the downloadable PDF after changing the CV:
 
@@ -73,11 +72,6 @@ pnpm generate && pnpm cv:pdf && pnpm generate
 
 `cv:pdf` prints the built `/cv` page with the Chrome installed on the machine and writes
 `public/pdf/Grigory-Gulyuk-CV.pdf`. The file is committed, so deploys never need a browser.
-
-## Replace the placeholder content
-
-`content/ideas/` contains five sample entries (one of them, "A graph layout that renders the same twice",
-describes this site's own graph). Delete or rewrite them. `linkedin-sample-post.md` points at a fake post id.
 
 ## Deploy to Railway
 
