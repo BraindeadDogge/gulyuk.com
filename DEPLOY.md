@@ -31,9 +31,10 @@ from this repository on every push to `main`. It needs no environment variables 
 ## 2. Put the domain on Cloudflare
 
 1. Add `gulyuk.com` to Cloudflare (**Add a domain**, Free plan is enough).
-2. Cloudflare shows two nameservers (names like `xxx.ns.cloudflare.com`). At **Namecheap**: **Domain List >
-   Manage > Nameservers**, choose **Custom DNS**, enter the two Cloudflare nameservers, and save with the green
-   tick. This can take from minutes to a day. Cloudflare emails you when the domain is active.
+2. Cloudflare assigned this zone the nameservers **`audrey.ns.cloudflare.com`** and
+   **`conrad.ns.cloudflare.com`** (use whatever the Cloudflare dashboard shows if they ever differ). At
+   **Namecheap**: **Domain List > Manage > Nameservers**, choose **Custom DNS**, enter those two, and save
+   with the green tick. This can take from minutes to a day. Cloudflare emails you when the domain is active.
 3. Cloudflare scans the old DNS and offers to import the records it finds. Accept the import, then review the list.
 4. **Delete** the Namecheap parking records for `@` and `www`: `A @ 192.64.119.191` and
    `CNAME www parkingpage.namecheap.com` (they would fight with Railway).
