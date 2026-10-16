@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   site: {
     url: 'https://gulyuk.com',
     name: 'Grigory Gulyuk',
-    description: 'Notes, research and experiments by Grigory Gulyuk.',
+    description: 'Notes, experiments and a CV by Grigory Gulyuk, a software engineer working on AI tooling and full-stack products.',
     defaultLocale: 'en',
     trailingSlash: false,
   },
@@ -23,7 +23,8 @@ export default defineNuxtConfig({
   ],
 
   colorMode: {
-    preference: 'system',
+    // Bright by default, whatever the visitor's system says. The toggle still switches to dark.
+    preference: 'light',
     fallback: 'light',
     classSuffix: '',
     storageKey: 'gulyuk-theme',
@@ -34,8 +35,7 @@ export default defineNuxtConfig({
       htmlAttrs: { lang: 'en' },
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'theme-color', content: '#F4F1EA', media: '(prefers-color-scheme: light)' },
-        { name: 'theme-color', content: '#141311', media: '(prefers-color-scheme: dark)' },
+        { name: 'theme-color', content: '#F4F1EA' },
       ],
       link: [{ rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
       // Applies the visitor's saved home view (graph or list) before first paint, on every page,
@@ -44,7 +44,7 @@ export default defineNuxtConfig({
         {
           tagPosition: 'head',
           innerHTML:
-            "try{var v=localStorage.getItem('gulyuk-view');if(v==='graph'||v==='list')document.documentElement.dataset.view=v}catch(e){}",
+            "try{var v=localStorage.getItem('gulyuk-view');if(innerWidth>=760&&(v==='graph'||v==='list'))document.documentElement.dataset.view=v}catch(e){}",
         },
       ],
     },
@@ -79,7 +79,14 @@ export default defineNuxtConfig({
   robots: { allow: ['/'] },
   ogImage: { enabled: false },
   linkChecker: { enabled: false },
-  schemaOrg: { identity: { type: 'Person', name: 'Grigory Gulyuk', url: 'https://gulyuk.com' } },
+  schemaOrg: {
+    identity: {
+      type: 'Person',
+      name: 'Grigory Gulyuk',
+      url: 'https://gulyuk.com',
+      sameAs: ['https://www.linkedin.com/in/gulyuk', 'https://github.com/BraindeadDogge'],
+    },
+  },
 
   typescript: { strict: true },
 })

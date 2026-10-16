@@ -59,7 +59,7 @@ defineProps<{ groups: TopicGroup[] }>()
 .count { font-weight: 400; }
 ul { list-style: none; margin: 0; padding: 0; }
 li { padding: 0.9rem 0; border-bottom: 1px solid var(--line); }
-.title { font: 600 1.15rem/1.3 var(--font-ui); }
+.title { font: 600 1.15rem/1.3 var(--font-ui); overflow-wrap: anywhere; }
 .meta { display: block; margin-top: 0.2rem; }
 li p { margin: 0.25rem 0 0; font-size: 1rem; line-height: 1.5; max-width: 52ch; }
 .group > p { margin: 0.6rem 0 0; }

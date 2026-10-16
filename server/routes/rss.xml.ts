@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
 <channel>
 <title>Grigory Gulyuk</title>
 <link>${site}</link>
-<description>Notes, research and experiments by Grigory Gulyuk.</description>
+<description>Notes and experiments by Grigory Gulyuk, a software engineer working on AI tooling and full-stack products.</description>
 <language>en</language>
 <lastBuildDate>${newest}</lastBuildDate>
 <atom:link href="${site}/rss.xml" rel="self" type="application/rss+xml" />

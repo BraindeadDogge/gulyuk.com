@@ -104,7 +104,8 @@ onMounted(() => {
   paused.value = saved ? saved === 'paused' : reduced()
   // Safety net for client-side arrivals if the head script did not run.
   const view = read(VIEW_KEY)
-  if (!document.documentElement.dataset.view && (view === 'graph' || view === 'list')) document.documentElement.dataset.view = view
+  // A saved choice only applies on screens wide enough for the graph.
+  if (!document.documentElement.dataset.view && innerWidth >= 760 && (view === 'graph' || view === 'list')) document.documentElement.dataset.view = view
   refreshShown()
 })
 onBeforeUnmount(() => {
@@ -115,7 +116,11 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="explorer" :class="{ 'is-entering': entering, 'is-leaving': switching === 'out', 'is-arriving': switching === 'in' }">
-    <h1 class="visually-hidden">Grigory Gulyuk: notes, experiments and CV</h1>
+    <!-- Visible in the list view and on phones; visually hidden when the graph is the page. -->
+    <div class="title-block">
+      <h1>Grigory Gulyuk<span class="visually-hidden">: notes, experiments and CV</span></h1>
+      <p class="blurb">Software engineer. Notes, experiments and a CV.</p>
+    </div>
 
     <section id="graph-panel" class="graph-panel" aria-label="Map of ideas, topics and CV">
       <GraphView
@@ -134,8 +139,8 @@ onBeforeUnmount(() => {
 
     <footer class="stage-footer">
       <div class="intro">
-        <p class="blurb">Notes, experiments and a CV. Every shape is a page.</p>
         <div class="graph-only">
+          <p class="blurb">Notes, experiments and a CV. Every shape is a page.</p>
           <p class="mono muted legend">
             <span class="key"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" class="k-hub" /></svg>topic</span>
             <span class="key"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="4.5" class="k-idea" /></svg>idea</span>
@@ -258,6 +263,28 @@ html[data-view='list'] .list-panel {
 .controls { align-items: center; }
 .status-line { min-width: 12ch; text-align: right; }
 .status-line:not(:empty)::before { content: '> ' / ''; color: var(--accent); }
+
+/* The title block is the list view's heading; the graph view keeps its h1 visually hidden. */
+.title-block { padding: 1.5rem 0 0.5rem; }
+.title-block .blurb { margin-top: 0.75rem; }
+@media (min-width: 760px) {
+  .title-block {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+}
+html[data-view='graph'] .title-block {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+html[data-view='list'] .title-block {
+  position: static; width: auto; height: auto; margin: 0; padding: 1.5rem 0 0.5rem; overflow: visible; clip-path: none; white-space: normal;
+}
+
+/* Phones get the list only: a graph that small cannot be read or touched accurately. */
+@media (max-width: 759px) {
+  .controls { display: none; }
+  .stage-footer { padding: 0; }
+  .classic-gap { display: none; }
+}
 
 /* Legend and hint only belong with the graph: CSS follows the same view rules as the panels. */
 .graph-only { display: none; }

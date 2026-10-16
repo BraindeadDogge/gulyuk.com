@@ -3,8 +3,8 @@ const data = await useHomeData()
 
 useHead({ titleTemplate: '%s' })
 useSeoMeta({
-  title: 'Grigory Gulyuk — machine learning notes, experiments and CV',
-  description: 'Notes, interactive experiments and a CV by Grigory Gulyuk, machine learning engineer and researcher.',
+  title: 'Grigory Gulyuk — software engineer, AI tooling and full-stack',
+  description: 'Notes, interactive experiments and a CV by Grigory Gulyuk, a software engineer working on AI tooling and full-stack products.',
   ogTitle: 'Grigory Gulyuk',
   ogDescription: 'Notes, interactive experiments and a CV.',
   ogType: 'website',
