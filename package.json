@@ -4,14 +4,17 @@
   "private": true,
   "packageManager": "pnpm@10.20.0",
   "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
+    "essay": "node essays/function-approximation/build.mjs",
+    "taxonomy": "node scripts/taxonomy-doc.mjs",
+    "build": "pnpm essay && nuxt build",
+    "dev": "pnpm essay && nuxt dev",
+    "generate": "pnpm essay && nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "test": "vitest run",
+    "test:essay": "node --test essays/function-approximation/tests/*.test.js",
     "test:e2e": "playwright test",
-    "typecheck": "nuxt typecheck",
+    "typecheck": "pnpm essay && nuxt typecheck",
     "cv:pdf": "node scripts/build-cv-pdf.mjs"
   },
   "dependencies": {
@@ -33,9 +36,12 @@
     "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.64.1",
     "@types/d3-force": "^3.0.10",
+    "katex": "^0.19.0",
+    "mdream": "2.0.3",
     "typescript": "^7.0.2",
     "vitest": "^5.0.5",
-    "vue-tsc": "^3.3.13"
+    "vue-tsc": "^3.3.13",
+    "yaml": "^2.9.1"
   },
   "engines": {
     "node": ">=22.22.3"

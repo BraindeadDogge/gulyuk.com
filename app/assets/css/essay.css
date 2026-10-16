@@ -1,0 +1,235 @@
+/* Styles for the function-approximation essay, written in the site's own language:
+   paper and ink, one vermilion accent, hairline rules, no panels, no shadows.
+   The canvases read their colours from these variables (see essays/.../ui/plot.js), so they are
+   defined on :root; everything else is scoped under .essay-root so it cannot leak into other pages. */
+
+:root {
+  --curve: var(--accent);       /* the approximation */
+  --param: var(--ink);          /* anything you control: handles, slider labels */
+  --err: var(--ink);            /* the gap between the target and the fit */
+  --ghost: var(--edge);
+  /* Chapter 11 compares up to six fits on one plot, so it needs six distinguishable lines. */
+  --cat1: #c2301a; --cat2: #1b1a17; --cat3: #3c6e8f; --cat4: #6f7d2a; --cat5: #b8860b; --cat6: #7b4b7a;
+}
+html.dark {
+  --cat1: #ff6b4a; --cat2: #ece8df; --cat3: #6fa8c9; --cat4: #a3b94f; --cat5: #e0b24a; --cat6: #b98ab8;
+}
+
+.essay-root { position: relative; }
+.essay-root [hidden] { display: none !important; }
+
+/* ---------- Chrome: progress line, contents, target bar ---------- */
+
+#progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 30;
+  background: var(--accent);
+  transform: scaleX(0); transform-origin: 0 50%;
+}
+
+.essay-root .contents {
+  max-width: var(--measure);
+  margin: 0 0 3rem;
+  padding: 1rem 0 1.1rem;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+.essay-root .contents .label { margin: 0 0 0.5rem; }
+.essay-root .contents ol {
+  margin: 0; padding: 0 0 0 2.4rem;
+  columns: 2 15rem; column-gap: 2rem;
+  list-style: decimal-leading-zero;
+  font: 0.875rem/1.9 var(--font-mono);
+}
+.essay-root .contents li::marker { color: var(--muted); }
+.essay-root .contents a { text-decoration: none; }
+.essay-root .contents a:hover { text-decoration: underline; }
+.essay-root .contents a[aria-current='true'] { color: var(--accent); }
+
+.essay-root .bar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.75rem;
+  max-width: var(--wide);
+  padding: 0.35rem 0;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.essay-root .bar-l { font: 0.75rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.essay-root .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.essay-root #notice { font: 0.8125rem var(--font-mono); color: var(--accent); }
+
+/* On a phone the four chips become one compact picker, so the bar stays a single short row. */
+.essay-root .bar-select { display: none; }
+.essay-root select {
+  min-height: 44px; padding: 0 0.6rem;
+  font: 500 0.85rem var(--font-mono);
+  color: var(--ink); background: var(--bg);
+  border: 1px solid var(--ink); border-radius: 2px;
+}
+@media (max-width: 700px) {
+  .essay-root .bar { gap: 0.35rem 0.6rem; padding: 0.4rem 0; }
+  .essay-root .bar-l, .essay-root .chips { display: none; }
+  .essay-root .bar-select { display: block; }
+  .essay-root .chapter { scroll-margin-top: 4rem; }
+}
+
+/* The sliders behind the draggable handles: invisible until one of them has focus. */
+.essay-root .handle-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); gap: 0.2rem 1rem; margin: 0.6rem 0 0; }
+.essay-root .handle-inputs:not(:focus-within) {
+  position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+.essay-root .handle-inputs .hi { display: flex; align-items: center; gap: 0.5rem; font: 0.8125rem var(--font-mono); }
+.essay-root .handle-inputs .hi span { min-width: 2.2ch; color: var(--muted); }
+
+/* ---------- Chapters ---------- */
+
+.essay-root .essay { max-width: var(--wide); }
+.essay-root .chapter { margin: 0 0 5rem; scroll-margin-top: 4.5rem; }
+.essay-root .chapter::after { content: ''; display: block; clear: both; }
+.essay-root .chapter > * { max-width: var(--measure); }
+.essay-root .chapter > * + * { margin-top: 1.1em; }
+.essay-root .chapter > .figure,
+.essay-root .chapter > .tablewrap { max-width: var(--wide); }
+.essay-root .chapter p { margin-bottom: 0; }
+.essay-root .chapter h2 { margin-top: 0; margin-bottom: 0.9rem; }
+.essay-root .eyebrow {
+  margin: 0 0 0.35rem;
+  font: 0.8125rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+}
+.essay-root .p { font-weight: 600; border-bottom: 1px dotted currentColor; }
+.essay-root .warn { color: var(--accent); }
+.essay-root .outro { margin-top: 3rem; max-width: var(--measure); font: 0.8125rem var(--font-mono); }
+.essay-root #reset-all { display: inline-flex; align-items: center; min-height: 44px; }
+
+/* ---------- Figures ---------- */
+
+.essay-root .figure {
+  clear: both;
+  margin: 2rem 0;
+  padding: 1rem 0 0.8rem;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.essay-root .figure canvas { display: block; width: 100%; height: 340px; touch-action: pan-y; }
+.essay-root .figure.short canvas { height: 230px; }
+.essay-root .figure canvas.small { height: 200px; margin-top: 8px; }
+.essay-root figcaption {
+  margin-top: 0.9rem; max-width: 75ch;
+  font: 0.8125rem/1.55 var(--font-mono); color: var(--muted);
+}
+.essay-root .readout {
+  min-height: 1.5em; margin: 0.6rem 0 0.25rem;
+  font: 0.8125rem/1.5 var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.essay-root .readout b { color: var(--ink); }
+.essay-root .legend { margin: 0.35rem 0 0; font: 0.78rem/1.5 var(--font-mono); color: var(--muted); }
+.essay-root .breaknote {
+  margin: 0.6rem 0 0; padding: 0.15rem 0 0.15rem 0.8rem; border-left: 3px solid var(--accent);
+  font: 0.9rem/1.5 var(--font-ui); color: var(--ink);
+}
+.essay-root .breaknote::before { content: 'What broke · '; font: 0.6875rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); }
+.essay-root .pinnote {
+  margin: 0.6rem 0 0; padding: 0.15rem 0 0.15rem 0.8rem; border-left: 3px solid var(--ink);
+  font: 0.9rem/1.5 var(--font-ui); color: var(--ink);
+}
+.essay-root .pinnote a { color: var(--accent); }
+.essay-root .figure.flash canvas { outline: 2px solid var(--accent); outline-offset: -2px; transition: outline-color 0.8s; }
+.essay-root .breaknote:empty { display: none; }
+
+.essay-root .ctrls { display: grid; grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr)); gap: 0.5rem 1.5rem; margin: 0.6rem 0; }
+.essay-root .ctrl { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.essay-root .ctrl label { display: flex; justify-content: space-between; font: 0.8125rem var(--font-mono); }
+.essay-root .ctrl label span:first-child { font-weight: 600; }
+.essay-root .ctrl output { color: var(--muted); font-variant-numeric: tabular-nums; }
+.essay-root .row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0.5rem 0; }
+
+/* Buttons and chips: outline in ink, filled when on. Hover borrows the accent. */
+.essay-root button {
+  min-height: 44px; padding: 0 0.9rem;
+  font: 500 0.85rem var(--font-mono);
+  color: var(--ink); background: transparent;
+  border: 1px solid var(--ink); border-radius: 2px;
+  cursor: pointer;
+  transition: background-color var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out), border-color var(--t-fast) var(--ease-out);
+}
+.essay-root button:hover { border-color: var(--accent); color: var(--accent); }
+.essay-root button[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.essay-root button[aria-pressed='true']:hover { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.essay-root button:disabled { opacity: 0.45; cursor: default; }
+.essay-root button:disabled:hover { border-color: var(--ink); color: var(--ink); }
+
+/* Sliders: a hairline track and a 24px ring, like the rest of the site. */
+.essay-root input[type='range'] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 44px; margin: 0; background: transparent;
+}
+.essay-root input[type='range']::-webkit-slider-runnable-track { height: 1px; background: var(--ink); }
+.essay-root input[type='range']::-moz-range-track { height: 1px; background: var(--ink); }
+.essay-root input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 24px; height: 24px; margin-top: -12px;
+  border-radius: 50%; background: var(--bg); border: 1.5px solid var(--ink);
+  transition: transform var(--t-fast) var(--ease-out), border-color var(--t-fast) var(--ease-out);
+}
+.essay-root input[type='range']::-moz-range-thumb {
+  width: 22px; height: 22px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--ink);
+}
+.essay-root input[type='range']:hover::-webkit-slider-thumb { border-color: var(--accent); }
+.essay-root input[type='range']:active::-webkit-slider-thumb { transform: scale(1.15); }
+
+/* ---------- Margin notes and optional math ---------- */
+
+.essay-root .aside {
+  margin: 1rem 0; padding-left: 0.8rem;
+  font-size: 0.9rem; line-height: 1.5; color: var(--muted);
+  border-left: 1px solid var(--line);
+}
+@media (min-width: 1100px) {
+  .essay-root .aside { float: right; clear: right; width: 12.5rem; margin: 0 0 1rem 1.5rem; }
+}
+.essay-root details.math {
+  margin: 1.4rem 0; padding-left: 1rem;
+  border-left: 1px solid var(--line);
+  font-size: 1rem; overflow-x: auto;
+}
+.essay-root details.math summary {
+  display: flex; align-items: center; min-height: 44px; cursor: pointer;
+  font: 0.8125rem var(--font-mono); color: var(--muted);
+}
+.essay-root details.math[open] summary { color: var(--ink); }
+.essay-root details.math > * + * { margin-top: 0.8em; }
+.essay-root details.math p { margin: 0 0 0.8em; }
+.essay-root details.math math[display='block'] { padding-left: 0; border-left: 0; margin: 0.9em 0; }
+
+/* ---------- Chapter 11: table and pinned fits ---------- */
+
+.essay-root .tablewrap { overflow-x: auto; margin: 1.5rem 0; }
+.essay-root table { border-collapse: collapse; min-width: 820px; font-size: 0.875rem; line-height: 1.4; }
+.essay-root th, .essay-root td { text-align: left; vertical-align: top; padding: 0.55rem 0.7rem 0.55rem 0; border-bottom: 1px solid var(--line); }
+.essay-root th {
+  font: 400 0.6875rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+  border-bottom-color: var(--ink);
+}
+.essay-root tbody th[scope="row"] {
+  font: 500 0.875rem var(--font-ui); text-transform: none; letter-spacing: 0; color: var(--ink); border-bottom-color: var(--line);
+}
+.essay-root .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.essay-root tbody tr.hit { background: color-mix(in srgb, var(--accent) 11%, transparent); }
+/* Not colour alone: a highlighted row also gets a rule and a text marker. */
+.essay-root tbody tr.hit th[scope="row"] { border-left: 3px solid var(--accent); padding-left: 0.6rem; }
+.essay-root tbody tr.hit th[scope="row"]::after { content: ' · fits your case'; font: 400 0.6875rem var(--font-mono); color: var(--accent); }
+.essay-root .pins { margin: 0.5rem 0; padding: 0; list-style: none; font: 0.8125rem var(--font-mono); }
+.essay-root .pins li { display: flex; align-items: center; gap: 0.6rem; min-height: 44px; }
+.essay-root .pins i { display: inline-block; width: 22px; border-top: 3px solid; }
+.essay-root .pins button { min-width: 44px; padding: 0 0.5rem; }
+
+/* ---------- Glossary ---------- */
+
+.essay-root abbr[data-g] { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; cursor: pointer; }
+.essay-root dl.gloss { margin: 0; }
+.essay-root dl.gloss dt { margin-top: 0.9rem; font: 0.8125rem var(--font-mono); }
+.essay-root dl.gloss dd { margin: 0.15rem 0 0; color: var(--muted); }
+#gpop {
+  position: absolute; z-index: 40; max-width: 280px; padding: 0.6rem 0.75rem;
+  background: var(--bg); color: var(--ink);
+  border: 1px solid var(--ink); border-radius: 2px;
+  font: 0.9rem/1.5 var(--font-body);
+}

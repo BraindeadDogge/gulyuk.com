@@ -1,27 +1,45 @@
 <script setup lang="ts">
-import { formatDate, topicLabel } from '~~/shared/graph/build-graph'
+import { formatDate } from '~~/shared/graph/build-graph'
 
 const route = useRoute()
 const slug = String(route.params.slug)
 
-const { data: page } = await useAsyncData(`idea-${slug}`, async () =>
-  canQueryContent ? await queryCollection('ideas').path(`/ideas/${slug}`).first() : null,
-)
+type MinimarkNode = string | [string, Record<string, unknown>, ...unknown[]]
+// An interactive essay carries a plain-text copy of itself inside its component tag, for the .md and llms.txt
+// output. The page renders the component instead, so drop the copy here to keep it out of the page payload.
+const withoutTextCopy = <T extends { body: { value?: unknown } }>(p: T): T => {
+  const value = p.body?.value
+  if (!Array.isArray(value)) return p
+  // The copy's code blocks also leave a syntax-highlighting <style> node at the end of the body; it is not needed either.
+  const trimmed = (value as MinimarkNode[])
+    .filter(n => !(Array.isArray(n) && n[0] === 'style'))
+    .map(n => (Array.isArray(n) && n[0].endsWith('-essay') ? [n[0], n[1]] : n))
+  return { ...p, body: { ...p.body, value: trimmed, toc: undefined } }
+}
+
+const { data: page } = await useAsyncData(`idea-${slug}`, async () => {
+  if (!canQueryContent) return null
+  const found = await queryCollection('ideas').path(`/ideas/${slug}`).first()
+  return found ? withoutTextCopy(found) : null
+})
 if (!page.value || page.value.draft) {
   throw createError({ statusCode: 404, statusMessage: 'No such idea', fatal: true })
 }
 const { data: index } = await useIdeasIndex()
+const vocab = await useVocabulary()
+const labelOf = (id: string) => vocab.value.labels[id] ?? id
 
 const date = String(page.value.date).slice(0, 10)
 const updated = page.value.updated ? String(page.value.updated).slice(0, 10) : null
-const minutes = readingMinutes(page.value.body)
+const minutes = page.value.minutes ?? readingMinutes(page.value.body)
 
+// Related: shared topics count most; sharing the area counts a little, so there is always something to show.
 const related = computed(() =>
   (index.value ?? [])
     .filter(i => i.slug !== slug)
-    .map(i => ({ idea: i, shared: i.topics.filter(t => page.value!.topics.includes(t)).length }))
-    .filter(r => r.shared > 0)
-    .sort((a, b) => b.shared - a.shared)
+    .map(i => ({ idea: i, score: i.topics.filter(t => page.value!.topics.includes(t)).length * 2 + (i.area === page.value!.area ? 1 : 0) }))
+    .filter(r => r.score > 0)
+    .sort((a, b) => b.score - a.score)
     .slice(0, 4)
     .map(r => r.idea),
 )
@@ -34,7 +52,8 @@ useSeoMeta({
   ogType: 'article',
   articlePublishedTime: date,
   articleModifiedTime: updated ?? date,
-  articleTag: page.value.topics,
+  articleSection: labelOf(page.value.area),
+  articleTag: page.value.topics.map(labelOf),
 })
 useSchemaOrg([
   defineArticle({
@@ -42,7 +61,8 @@ useSchemaOrg([
     description: page.value.summary,
     datePublished: date,
     dateModified: updated ?? date,
-    keywords: page.value.topics,
+    articleSection: labelOf(page.value.area),
+    keywords: page.value.topics.map(labelOf),
   }),
   defineBreadcrumb({
     itemListElement: [{ name: 'Home', item: '/' }, { name: 'Ideas', item: '/ideas' }, { name: page.value.title }],
@@ -58,13 +78,15 @@ useSchemaOrg([
         <span>
           <time :datetime="date">{{ formatDate(date) }}</time>
           <template v-if="updated"> · updated <time :datetime="updated">{{ formatDate(updated) }}</time></template>
-          · {{ page.kind }} · <MaturityBadge :value="page.maturity" /> · {{ minutes }} min read
+          · {{ page.kind }} ·
+          <NuxtLink :to="`/topics/${page.area}`" class="area">{{ labelOf(page.area) }}</NuxtLink>
+          · <MaturityBadge :value="page.maturity" /> · {{ minutes }} min read
         </span>
       </p>
       <h1>{{ page.title }}</h1>
       <p class="lede">{{ page.summary }}</p>
-      <ul class="topics" aria-label="Topics">
-        <li v-for="t in page.topics" :key="t"><NuxtLink :to="`/topics/${t}`" class="mono">{{ topicLabel(t) }}</NuxtLink></li>
+      <ul v-if="page.topics.length" class="topics" aria-label="Topics">
+        <li v-for="t in page.topics" :key="t"><NuxtLink :to="`/topics/${t}`" class="mono">{{ labelOf(t) }}</NuxtLink></li>
       </ul>
     </header>
 
@@ -86,6 +108,7 @@ useSchemaOrg([
 .head { padding: 2rem 0 2.5rem; max-width: var(--measure); }
 .meta { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; margin: 0 0 1.25rem; }
 .back { text-decoration: none; }
+.area { color: var(--ink); }
 .lede { margin: 1.25rem 0 0; font-size: 1.35rem; line-height: 1.45; font-style: italic; }
 .topics { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; list-style: none; margin: 1.25rem 0 0; padding: 0; }
 .topics a { text-decoration: none; color: var(--muted); }

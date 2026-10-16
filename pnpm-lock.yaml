@@ -57,6 +57,12 @@ importers:
       '@types/d3-force':
         specifier: ^3.0.10
         version: 3.0.10
+      katex:
+        specifier: ^0.19.0
+        version: 0.19.0
+      mdream:
+        specifier: 2.0.3
+        version: 2.0.3
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -66,6 +72,9 @@ importers:
       vue-tsc:
         specifier: ^3.3.13
         version: 3.3.13(typescript@7.0.2)
+      yaml:
+        specifier: ^2.9.1
+        version: 2.9.1
 
 packages:
 
@@ -2026,6 +2035,10 @@ packages:
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
 
+  commander@15.0.0:
+    resolution: {integrity: sha512-z67u4ZhzCL/Tydu1lJARtEZYWbWaN7oYLHbsuzocr6y4N6WZAagG3RQ4FW61V1/0+jImpj293XfrcYnd1qxtPg==}
+    engines: {node: '>=22.12.0'}
+
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
 
@@ -2897,6 +2910,10 @@ packages:
 
   katex@0.16.47:
     resolution: {integrity: sha512-Eeo8Ys1doU1z+x8AZsPpQu+p/QcZBI5PeOo7QGQdy2x2m0MU/hYagBbGOmXwr5KVbEfVuWv9LpnQWeehogurjg==}
+    hasBin: true
+
+  katex@0.19.0:
+    resolution: {integrity: sha512-v6Tznz3zJ7u3niRCoDTsumM2+HA2XXcCu+WAacCeHD2z3p9A9Ks987o5FzfTGBN0e8A0vjEgIDvLbICrXpdw/Q==}
     hasBin: true
 
   kleur@4.1.5:
@@ -7131,6 +7148,8 @@ snapshots:
 
   comma-separated-tokens@2.0.3: {}
 
+  commander@15.0.0: {}
+
   commander@2.20.3: {}
 
   commander@8.3.0: {}
@@ -8079,6 +8098,10 @@ snapshots:
   katex@0.16.47:
     dependencies:
       commander: 8.3.0
+
+  katex@0.19.0:
+    dependencies:
+      commander: 15.0.0
 
   kleur@4.1.5: {}
 

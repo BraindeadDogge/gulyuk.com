@@ -1,4 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
@@ -57,6 +60,19 @@ export default defineNuxtConfig({
         remarkPlugins: { 'remark-math': {} },
         rehypePlugins: { 'rehype-katex': { options: { output: 'mathml' } } },
       },
+    },
+  },
+
+  hooks: {
+    // The essay is a Vue component, so its source file holds only a tag. Put the plain-text build of the post
+    // (essays/function-approximation/dist/essay.md) inside that tag when the content is parsed, so /ideas/<slug>.md,
+    // llms.txt and search show the real text. The page itself drops these children again (see ideas/[slug].vue).
+    'content:file:beforeParse': (ctx: { file: { id: string, body: string } }) => {
+      if (!ctx.file.id.endsWith('ideas/function-approximation.md')) return
+      let text = ''
+      try { text = readFileSync(resolve('essays/function-approximation/dist/essay.md'), 'utf8') }
+      catch { return }
+      ctx.file.body = ctx.file.body.replace('::function-approximation-essay\n::', () => `::function-approximation-essay\n${text}\n::`)
     },
   },
 
