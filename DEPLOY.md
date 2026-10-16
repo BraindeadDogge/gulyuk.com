@@ -143,3 +143,43 @@ Also open `https://gulyuk.com`, `/cv`, an idea page and `/rss.xml` in a browser.
 | Railway says the certificate is pending for a long time | the `@` record is proxied too early, or the TXT record is missing; set it to DNS only and re-check |
 | `www` shows a Cloudflare error instead of redirecting | the `www` record is missing or grey-clouded; it must be proxied for the rule to run |
 | Old site still appears | old `A` or `AAAA` records for `@` are still there, or nameservers have not changed yet |
+
+## Visit statistics (Umami)
+
+The site counts visits with Umami, which you host yourself on Railway next to the site. Nothing is counted until
+the three variables in step 5 are set. These are things you do in your own accounts; nothing here signs in for you.
+
+1. **Run Umami on Railway.** In the `gulyuk-com` project: New, Template, search "Umami", deploy. It creates the app
+   and a Postgres database. In the Umami service set `APP_SECRET` to a random string of at least 32 characters and
+   `DISABLE_TELEMETRY=1`.
+2. **Give it a subdomain.** In the Umami service: Settings, Networking, Custom Domain, `stats.gulyuk.com`. Railway
+   shows a CNAME target. Add that CNAME for `stats` in Cloudflare (the `cf` CLI or the dashboard). Wait for the
+   certificate.
+3. **Secure the dashboard.** Open `https://stats.gulyuk.com`, sign in with Umami's default account (`admin`,
+   password `umami`) and change the password at once to a long, unique one. The dashboard stays private.
+4. **Add the site.** Settings, Websites, Add website: name `gulyuk.com`, domain `gulyuk.com`. Copy its Website ID.
+5. **Tell the site.** In the `gulyuk-com` site service on Railway add the variables
+   `NUXT_PUBLIC_UMAMI_HOST=https://stats.gulyuk.com`, `NUXT_PUBLIC_UMAMI_ID=<the Website ID>` and
+   `NUXT_PUBLIC_UMAMI_DOMAINS=gulyuk.com`, then redeploy. They are build arguments (see the `Dockerfile`), so the
+   new build bakes them into the pages.
+6. **Retention (13 months).** The privacy page promises it. Check whether the running Umami version offers a
+   data-retention setting (website settings or admin settings); if it does, set it to 13 months. If it does not,
+   run this against the Umami database every month (Railway Postgres, Data tab; confirm the table names with `\dt`
+   first):
+
+   ```sql
+   DELETE FROM event_data    WHERE created_at < NOW() - INTERVAL '13 months';
+   DELETE FROM website_event WHERE created_at < NOW() - INTERVAL '13 months';
+   DELETE FROM session       WHERE created_at < NOW() - INTERVAL '13 months';
+   ```
+
+   Put a monthly reminder in your calendar.
+7. **Reading the reports.** Pages and referrers: the website's Overview. Reading depth: Events, click `read-50` (or
+   `read-100`), then the `idea` property breakdown. Essay drop-off: `essay-chapter` by `chapter`. CV: Overview, page
+   `/cv`, plus `cv-download`, `profile-click` by `site` and `outbound` by `host`. Shared-link results: `landing` by
+   `ref`.
+8. **Tagged links.** Add `?ref=short-label` (lower-case letters, digits, hyphens) to any link you send. The label is
+   recorded once and disappears from the address bar.
+
+Local testing: `pnpm generate:test` builds the site with a stub collector address; `pnpm test:e2e` needs that build
+(the Playwright config starts the stub on port 4174 itself).

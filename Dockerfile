@@ -8,6 +8,13 @@ RUN corepack enable
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
+# Public analytics settings are baked into the static pages at build time (Railway passes service variables as build arguments).
+ARG NUXT_PUBLIC_UMAMI_HOST
+ARG NUXT_PUBLIC_UMAMI_ID
+ARG NUXT_PUBLIC_UMAMI_DOMAINS
+ENV NUXT_PUBLIC_UMAMI_HOST=$NUXT_PUBLIC_UMAMI_HOST \
+    NUXT_PUBLIC_UMAMI_ID=$NUXT_PUBLIC_UMAMI_ID \
+    NUXT_PUBLIC_UMAMI_DOMAINS=$NUXT_PUBLIC_UMAMI_DOMAINS
 RUN pnpm generate
 
 FROM caddy:2-alpine

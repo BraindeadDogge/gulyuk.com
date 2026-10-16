@@ -89,3 +89,29 @@ agree exactly. In the browser, `GraphView.vue` continues from those positions (d
 pull, slow drift, a pulse) and pauses when the tab is hidden, the graph is off-screen, or the visitor presses
 "pause motion". The plain list is always in the page too: it is the accessible version, the mobile default,
 and what crawlers read.
+
+## Visit statistics
+
+Visits are counted with a self-hosted Umami (setup in `DEPLOY.md`), without cookies. Tracking is off when the
+`NUXT_PUBLIC_UMAMI_*` variables are unset, the browser sends Global Privacy Control or Do Not Track, or the visitor
+used the footer opt-out. The logic that decides this is in `shared/analytics/`; the browser side is
+`app/plugins/analytics.client.ts`.
+
+| Event | Properties | When |
+|---|---|---|
+| (pageview) | url, referrer | every page and route change (path only) |
+| `read-25`, `read-50`, `read-75`, `read-100`, `read-end` | `idea` | article milestone reached, once per view |
+| `read-time` | `idea`, `seconds` | on leaving an idea page, if it was open 8 s or more |
+| `essay-chapter` | `idea`, `chapter` | first view of each essay chapter |
+| `figure-used` | `figure` | first interaction with a figure |
+| `cv-download` | | CV PDF download click |
+| `profile-click` | `site` | LinkedIn, GitHub or other profile link on the CV |
+| `outbound` | `host` | any link to another site (hostname only) |
+| `landing` | `ref` | first load with a valid `?ref=label` |
+
+To add an event: call `useTrack()('my-event', { prop: 'value' })` in a component, or put `data-track="my-event"`
+(and optionally `data-site="value"`) on a link, or, from non-Vue script, dispatch
+`document.dispatchEvent(new CustomEvent('site:track', { detail: { name, props } }))`. Names are lower-case letters,
+digits and hyphens (40 characters at most); strings are cut at 80 characters and URLs lose their query string.
+Never put anything about a person in a property. If you add or remove stored browser settings or events, update
+`app/pages/privacy.vue` too.
