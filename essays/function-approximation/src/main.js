@@ -7,6 +7,7 @@
     AP.initBar();
     AP.initGlossary();
     AP.initNav();
+    AP.initTrack();
     // One figure failing must not take the rest of the page down with it.
     AP.chapters.forEach((mount) => { try { mount(); } catch (e) { console.error('essay figure failed to start', e); } });
   };

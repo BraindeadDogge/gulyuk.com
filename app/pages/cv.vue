@@ -3,6 +3,8 @@ const { data: cv } = await useCv()
 if (!cv.value) throw createError({ statusCode: 404, statusMessage: 'CV not found', fatal: true })
 const vocab = await useVocabulary()
 
+const siteOf = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 function month(s?: string) {
   if (!s) return 'present'
@@ -31,10 +33,10 @@ useSchemaOrg([
       <p class="headline">{{ cv.profile.headline }}</p>
       <p class="mono muted contact">
         {{ cv.profile.location }}
-        <template v-for="l in cv.profile.links" :key="l.url"> · <a :href="l.url" target="_blank" rel="me noopener noreferrer">{{ l.label }}</a></template>
+        <template v-for="l in cv.profile.links" :key="l.url"> · <a :href="l.url" target="_blank" rel="me noopener noreferrer" data-track="profile-click" :data-site="siteOf(l.label)">{{ l.label }}</a></template>
         <template v-if="cv.profile.email"> · <a :href="`mailto:${cv.profile.email}`">{{ cv.profile.email }}</a></template>
       </p>
-      <p class="no-print"><a class="pdf mono" href="/pdf/Grigory-Gulyuk-CV.pdf" download>Download PDF ↓</a></p>
+      <p class="no-print"><a class="pdf mono" href="/pdf/Grigory-Gulyuk-CV.pdf" download data-track="cv-download">Download PDF ↓</a></p>
     </header>
 
     <section aria-labelledby="h-about" class="block">

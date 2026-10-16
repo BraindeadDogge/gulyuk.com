@@ -23,6 +23,7 @@
     "ui/figure.js",
     "ui/bar.js",
     "ui/nav.js",
+    "ui/track.js",
     "ui/glossary.js",
     "chapters/ch0.js",
     "chapters/ch1.js",

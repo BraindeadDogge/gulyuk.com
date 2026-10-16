@@ -3,6 +3,8 @@ import { formatDate } from '~~/shared/graph/build-graph'
 
 const route = useRoute()
 const slug = String(route.params.slug)
+const article = ref<HTMLElement>()
+useReadingProgress(() => article.value?.querySelector<HTMLElement>('.prose') ?? null, slug)
 
 type MinimarkNode = string | [string, Record<string, unknown>, ...unknown[]]
 // An interactive essay carries a plain-text copy of itself inside its component tag, for the .md and llms.txt
@@ -71,7 +73,7 @@ useSchemaOrg([
 </script>
 
 <template>
-  <article v-if="page" class="page idea">
+  <article v-if="page" ref="article" class="page idea">
     <header class="head">
       <p class="mono muted meta">
         <NuxtLink to="/ideas" class="back">← ideas</NuxtLink>
