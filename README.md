@@ -73,13 +73,10 @@ pnpm generate && pnpm cv:pdf && pnpm generate
 `cv:pdf` prints the built `/cv` page with the Chrome installed on the machine and writes
 `public/pdf/Grigory-Gulyuk-CV.pdf`. The file is committed, so deploys never need a browser.
 
-## Deploy to Railway
+## Deploy
 
-1. Create a Railway service from this repository. Railway detects the `Dockerfile`: a Node stage builds the
-   static site and a Caddy stage serves it (see `Caddyfile` for caching, security headers and the real 404).
-2. Add the custom domain `gulyuk.com` to the service and point DNS at Railway. Redirect `www` to the apex
-   in your DNS provider or with a second Railway domain.
-3. Nothing else is needed: no environment variables, no database.
+Railway builds the `Dockerfile` (a Node stage generates the static site, a Caddy stage serves it) on every push
+to `main`. Domain, Cloudflare and the `www` redirect are covered step by step in [DEPLOY.md](DEPLOY.md).
 
 ## How the graph works
 
