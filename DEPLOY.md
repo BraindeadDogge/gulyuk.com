@@ -6,6 +6,18 @@ Goal: `https://gulyuk.com` is the one real address. `www.gulyuk.com`, `http://gu
 The site is a static build served by Caddy in a container (see `Dockerfile` and `Caddyfile`). Railway builds it
 from this repository on every push to `main`. It needs no environment variables and no database.
 
+## Your actual values (checked 16 Oct 2026)
+
+- Railway project `gulyuk-com`, service `gulyuk-com`, temporary address
+  `https://gulyuk-com-production.up.railway.app`.
+- Railway custom domain `gulyuk.com` is already added. The DNS record it asks for is
+  **`CNAME  @  wxrkhi9q.up.railway.app`**. If Railway ever shows a different value, trust Railway.
+- Domain registrar: **Namecheap**. DNS is currently Namecheap's own (`dns1/dns2.registrar-servers.com`) and the
+  domain shows a parking page: `A @ 192.64.119.191` and `www` pointing at `parkingpage.namecheap.com`.
+  Both go away in step 2.
+- Namecheap **email forwarding** is on. It depends on Namecheap's DNS, so when nameservers move to Cloudflare
+  these records must be recreated in Cloudflare (step 2, item 5) or forwarded mail stops arriving.
+
 ## 1. Railway service
 
 1. In the Railway dashboard create a project and choose **Deploy from GitHub repo**, then pick
@@ -19,23 +31,38 @@ from this repository on every push to `main`. It needs no environment variables 
 ## 2. Put the domain on Cloudflare
 
 1. Add `gulyuk.com` to Cloudflare (**Add a domain**, Free plan is enough).
-2. Cloudflare shows two nameservers. At your domain registrar, replace the current nameservers with those two.
-   This can take from minutes to a day.
-3. Before changing nameservers, copy any DNS records the domain currently needs (for example `MX` and `TXT`
-   records for email) into Cloudflare. Cloudflare usually imports them; check the list.
-4. Delete any old `A`, `AAAA` or `CNAME` records for `@` and `www` that point at a previous host.
+2. Cloudflare shows two nameservers (names like `xxx.ns.cloudflare.com`). At **Namecheap**: **Domain List >
+   Manage > Nameservers**, choose **Custom DNS**, enter the two Cloudflare nameservers, and save with the green
+   tick. This can take from minutes to a day. Cloudflare emails you when the domain is active.
+3. Cloudflare scans the old DNS and offers to import the records it finds. Accept the import, then review the list.
+4. **Delete** the Namecheap parking records for `@` and `www`: `A @ 192.64.119.191` and
+   `CNAME www parkingpage.namecheap.com` (they would fight with Railway).
+5. **Keep email forwarding working.** Make sure these records exist in Cloudflare (all set to **DNS only**,
+   email records can never be proxied):
+
+   | Type | Name | Content | Priority |
+   |------|------|---------|----------|
+   | MX  | `@` | `eforward1.registrar-servers.com` | 10 |
+   | MX  | `@` | `eforward2.registrar-servers.com` | 10 |
+   | MX  | `@` | `eforward3.registrar-servers.com` | 10 |
+   | MX  | `@` | `eforward4.registrar-servers.com` | 15 |
+   | MX  | `@` | `eforward5.registrar-servers.com` | 20 |
+   | TXT | `@` | `v=spf1 include:spf.efwd.registrar-servers.com ~all` | n/a |
+
+   These are the values Namecheap's forwarding uses today. In Namecheap, **Domain List > Manage > Email
+   Forwarding** lists the same records if you want to compare. Send yourself a test mail after the switch.
 
 ## 3. Connect the domain to Railway
 
 1. In Railway, **Settings > Networking > Custom Domain**, add `gulyuk.com` (the bare domain, nothing else).
-2. Railway shows a **CNAME target** (like `abc123.up.railway.app`) and a **TXT verification record**
-   (named like `_railway-verify`). Treat both as the source of truth: copy the exact values from Railway.
+2. Railway shows a **CNAME target** (currently `wxrkhi9q.up.railway.app`) and, in some cases, a **TXT
+   verification record**. Treat what the Railway dashboard shows as the source of truth.
 3. In Cloudflare **DNS > Records** add:
 
-   | Type  | Name              | Content                          | Proxy status |
-   |-------|-------------------|----------------------------------|--------------|
-   | CNAME | `@`               | the CNAME target from Railway    | **DNS only** (grey cloud) |
-   | TXT   | the name Railway shows | the value Railway shows     | n/a          |
+   | Type  | Name | Content                    | Proxy status |
+   |-------|------|----------------------------|--------------|
+   | CNAME | `@`  | `wxrkhi9q.up.railway.app`  | **DNS only** (grey cloud) |
+   | TXT   | only if Railway lists one | the value Railway shows | n/a |
 
    Cloudflare allows a CNAME on the bare domain; it flattens it automatically.
 4. Wait until Railway shows the domain as verified and the certificate as issued (a few minutes). The grey cloud
