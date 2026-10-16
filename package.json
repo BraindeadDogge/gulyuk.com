@@ -9,6 +9,7 @@
     "build": "pnpm essay && nuxt build",
     "dev": "pnpm essay && nuxt dev",
     "generate": "pnpm essay && nuxt generate",
+    "generate:test": "NUXT_PUBLIC_UMAMI_HOST=http://127.0.0.1:4174 NUXT_PUBLIC_UMAMI_ID=test-site pnpm generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "test": "vitest run",

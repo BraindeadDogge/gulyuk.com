@@ -16,6 +16,16 @@ export default defineNuxtConfig({
     trailingSlash: false,
   },
 
+  // Visit statistics (Umami). Both values are public by design and read at build time (see DEPLOY.md).
+  // Left empty, no analytics code or request is ever made.
+  runtimeConfig: {
+    public: {
+      umamiHost: '',
+      umamiId: '',
+      umamiDomains: '',
+    },
+  },
+
   css: [
     '@fontsource-variable/newsreader/index.css',
     '@fontsource-variable/newsreader/wght-italic.css',
@@ -86,7 +96,7 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: true,
       failOnError: true,
-      routes: ['/', '/ideas', '/cv', '/rss.xml', '/not-found', '/404.html'],
+      routes: ['/', '/ideas', '/cv', '/privacy', '/legal', '/rss.xml', '/not-found', '/404.html'],
     },
   },
 
