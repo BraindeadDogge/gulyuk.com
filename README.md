@@ -19,13 +19,16 @@ pnpm test:e2e       # Playwright + axe against the static build (uses your insta
 ## Add an idea
 
 Create `content/ideas/some-slug.md`. The filename becomes the URL (`/ideas/some-slug`) and never changes.
+The area and topics must come from the fixed vocabulary in `content/taxonomy.yml`: read
+[NEW-IDEA-CHECKLIST.md](NEW-IDEA-CHECKLIST.md) first, and only add a topic when nothing in the list fits.
 
 ```md
 ---
 title: What the note is called
 summary: One or two sentences. Required; it feeds the list, RSS and search snippets.
 date: 2026-10-20
-topics: [ml, math]          # lowercase; each topic becomes a hub in the graph
+area: ai                    # exactly one area; it is the idea's hub on the graph
+topics: [ml-fundamentals, math]   # 0 to 3 topics; tags only, never graph nodes
 kind: research              # research | project | note | linkedin
 maturity: seedling          # seedling | budding | evergreen
 math: true                  # only if the note has equations
