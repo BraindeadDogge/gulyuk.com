@@ -14,6 +14,8 @@ test.describe('icons and share image', () => {
   for (const path of PAGES) {
     test(`${path} declares the full icon set, theme colours and share image`, async ({ page }) => {
       await page.goto(path)
+      await page.waitForLoadState('networkidle')
+      await page.waitForTimeout(500) // let the page hydrate: the tags must survive it
       const head = page.locator('head')
       await expect(head.locator('link[rel="icon"][href="/favicon.ico"]')).toHaveCount(1)
       await expect(head.locator('link[rel="icon"][type="image/svg+xml"][href="/favicon.svg"]')).toHaveCount(1)
@@ -21,8 +23,10 @@ test.describe('icons and share image', () => {
       await expect(head.locator('link[rel="manifest"][href="/site.webmanifest"]')).toHaveCount(1)
       await expect(head.locator('meta[name="theme-color"]')).toHaveCount(1)
       await expect(head.locator('meta[name="theme-color"]')).toHaveAttribute('content', '#F4F1EA')
-      await expect(head.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://gulyuk.com/og-image.png')
-      await expect(head.locator('meta[name="twitter:image"]')).toHaveAttribute('content', 'https://gulyuk.com/og-image.png')
+      // Idea pages carry their own generated card (see og.spec.ts); everything else shares one image.
+      const card = path.startsWith('/ideas/') ? /^https:\/\/gulyuk\.com\/_og\/.+\.png$/ : /^https:\/\/gulyuk\.com\/og-image\.png$/
+      await expect(head.locator('meta[property="og:image"]')).toHaveAttribute('content', card)
+      await expect(head.locator('meta[name="twitter:image"]')).toHaveAttribute('content', card)
       await expect(head.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image')
     })
   }

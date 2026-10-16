@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatDate } from '~~/shared/graph/build-graph'
+import { ideaTagline } from '~~/shared/og/tagline'
 
 const route = useRoute()
 const slug = String(route.params.slug)
@@ -57,6 +58,12 @@ useSeoMeta({
   articleSection: labelOf(page.value.area),
   articleTag: page.value.topics.map(labelOf),
 })
+// The share card for this idea, drawn at build time from OgImage/Idea.takumi.vue.
+defineOgImage('Idea', {
+  title: page.value.title,
+  tagline: ideaTagline(page.value.tagline, page.value.summary),
+  meta: [page.value.kind, page.value.maturity, `${minutes} min read`].join(' · '),
+}, { alt: page.value.title })
 useSchemaOrg([
   defineArticle({
     headline: page.value.title,

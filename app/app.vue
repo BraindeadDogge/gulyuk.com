@@ -5,17 +5,21 @@ useHead({
   meta: [{ name: 'theme-color', content: computed(() => (colorMode.value === 'dark' ? '#141311' : '#F4F1EA')) }],
 })
 
-// One share image for every page (links shared on LinkedIn, iMessage, Slack...). Pages can still set their own text.
-const image = `${useSiteConfig().url}/og-image.png`
-useSeoMeta({
-  ogImage: image,
-  ogImageWidth: 1200,
-  ogImageHeight: 630,
-  ogImageAlt: 'Grigory Gulyuk, gulyuk.com',
-  twitterCard: 'summary_large_image',
-  twitterImage: image,
-  twitterImageAlt: 'Grigory Gulyuk, gulyuk.com',
-})
+// One share image for every page (links shared on LinkedIn, iMessage, Slack...), except idea pages, which get their own
+// card drawn at build time (see ideas/[slug].vue).
+const route = useRoute()
+if (!/^\/ideas\/[^/]+\/?$/.test(route.path)) {
+  const image = `${useSiteConfig().url}/og-image.png`
+  useSeoMeta({
+    ogImage: image,
+    ogImageWidth: 1200,
+    ogImageHeight: 630,
+    ogImageAlt: 'Grigory Gulyuk, gulyuk.com',
+    twitterImage: image,
+    twitterImageAlt: 'Grigory Gulyuk, gulyuk.com',
+  })
+}
+useSeoMeta({ twitterCard: 'summary_large_image' })
 </script>
 
 <template>

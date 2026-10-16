@@ -16,8 +16,8 @@
 		-Server
 	}
 
-	# Hashed build assets never change.
-	@assets path /_nuxt/*
+	# Hashed build assets never change (the share cards in /_og/ are named after a hash of their content).
+	@assets path /_nuxt/* /_og/*
 	header @assets Cache-Control "public, max-age=31536000, immutable"
 
 	# Caddy may not know this extension; browsers want the manifest served with its own type.
@@ -25,7 +25,7 @@
 	header @manifest Content-Type application/manifest+json
 
 	# HTML and payloads are revalidated, so a new deploy shows up immediately.
-	@pages not path /_nuxt/* /pdf/* /favicon.svg
+	@pages not path /_nuxt/* /_og/* /pdf/* /favicon.svg
 	header @pages Cache-Control "public, max-age=0, must-revalidate"
 
 	# /ideas/foo -> /ideas/foo/index.html, with no SPA fallback: unknown URLs are real 404s.
