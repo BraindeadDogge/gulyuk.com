@@ -18,6 +18,7 @@ home graph stays readable and nobody (including you) has to remember which near-
    ---
    title: What the idea is called
    summary: One or two sentences. Required.
+   tagline: One short line, 80 characters at most. Required; it is printed on the idea's share picture.
    date: 2026-10-20
    area: ai                     # exactly one id from the list below
    topics: [ml-fundamentals]    # 0 to 3 ids from the list below

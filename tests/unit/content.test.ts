@@ -12,7 +12,8 @@ function frontmatter(file: string) {
   const block = text.match(/^---\n([\s\S]*?)\n---/)?.[1] ?? ''
   const field = (name: string) => block.match(new RegExp(`^${name}:\\s*(.+)$`, 'm'))?.[1]?.trim()
   const topics = (field('topics') ?? '').replace(/[[\]]/g, '').split(',').map(t => t.trim()).filter(Boolean)
-  return { text, kind: field('kind'), embed: field('embed'), topics, summary: field('summary') }
+  const tagline = field('tagline')?.replace(/^(["'])(.*)\1$/, '$2')
+  return { text, kind: field('kind'), embed: field('embed'), topics, summary: field('summary'), tagline, draft: field('draft') === 'true' }
 }
 
 describe('content/ideas', () => {
@@ -26,6 +27,11 @@ describe('content/ideas', () => {
       })
       it('has a summary (the area and topics are checked against the vocabulary in taxonomy.test.ts)', () => {
         expect(fm.summary).toBeTruthy()
+      })
+      it('has a short tagline for its share image (80 characters at most)', () => {
+        if (fm.draft) return
+        expect(fm.tagline, 'add `tagline:` to the frontmatter').toBeTruthy()
+        expect(fm.tagline!.length).toBeLessThanOrEqual(80)
       })
       it('uses clean topic slugs without duplicates', () => {
         for (const t of fm.topics) expect(t).toMatch(/^[a-z0-9-]+$/)

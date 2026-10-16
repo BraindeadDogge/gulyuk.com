@@ -1,6 +1,7 @@
 ---
 title: Machine learning is function approximation
 summary: A model is a function you cannot write down, so you build one out of simple parts and tune it until it fits. An interactive walk through the standard parts, and what each is good and bad at.
+tagline: "Build the function you can't write down, then tune it until it fits."
 date: 2026-10-16
 area: ai
 topics: [ml-fundamentals, math, explainers]

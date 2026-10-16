@@ -1,6 +1,7 @@
 ---
 title: Leaving JetBrains
 summary: My internship on MCP Steroid has ended. What I learned at JetBrains, who I learned it from, and what comes next.
+tagline: "What I learned at JetBrains, from whom, and what comes next."
 date: 2026-10-12
 area: career
 topics: [internships, developer-tools]

@@ -24,6 +24,8 @@ export default defineContentConfig({
       schema: z.object({
         title: z.string().min(1),
         summary: z.string().min(1),
+        // The short line on the share card (80 characters at most). Without one, the first sentence of the summary is used.
+        tagline: z.string().max(80).optional(),
         date: z.date(),
         updated: z.date().optional(),
         area,
